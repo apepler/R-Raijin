@@ -10,7 +10,6 @@
 ## Option to set a higher intensity threshold
 library(ncdf4)
 library(raster)
-Loading required package: sp
 library(maps)
 library(abind)
 library(sp)
