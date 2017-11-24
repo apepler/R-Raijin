@@ -94,9 +94,9 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(snames)
-breaks=c(-1,seq(-0.8,-0.3,0.1),0,seq(0.3,0.8,0.1),1)
-#breaks=c(1,seq(-0.7,0.7,0.1),1)
-col1=col_anom(length(breaks)-1)
+#breaks=c(-1,seq(-0.8,-0.3,0.1),0,seq(0.3,0.8,0.1),1)
+breaks=c(-1,seq(0.3,0.9,0.1),0.95,2)
+col1=col_val(length(breaks)-1)
 
 pdf(file=fout,width=4*ss,height=6.3)
 layout(rbind(seq(1,ss),seq(ss+1,ss*2),rep(ss*2+1,ss)),height=c(1,1,0.3))
@@ -132,12 +132,13 @@ for(n in startN:3)
    if(n==1) efrq[,,J,s]=freq else
    {
    meanfreq=apply(freq,c(1,2),mean,na.rm=T)
+   meanfreq2=apply(efrq[,,,s],c(1,2),mean,na.rm=T)
    cyccorr<-array(NaN,c(length(lon),length(lat),2))
  
    for(i in 1:length(lon))
     for(j in 1:length(lat))
-     if(!is.na(meanfreq[i,j]) & !is.na(apply(efrq[,,,s],c(1,2),mean,na.rm=T)))
-     if(meanfreq[i,j]>=0.1 & apply(efrq[,,,s],c(1,2),mean,na.rm=T)>=1)
+     if(!is.na(meanfreq[i,j]) & !is.na(meanfreq2[i,j]))
+     if(meanfreq[i,j]>=0.1 & meanfreq2[i,j]>=0.1)
      {
      a=cor.test(freq[i,j,],efrq[i,j,,s],na.rm=T)
       cyccorr[i,j,1]=a$estimate
@@ -150,7 +151,7 @@ for(n in startN:3)
    image(lon,lat,cyccorr[,,1],breaks=breaks,col=col1,xlab="",ylab="",
           main=paste(snames[s],type,"corr:",reanals[n],"v ERAI"))
    map('world2',add=T)   
-   contour(lon,lat,cyccorr[,,2],levels=c(-100,0.05,100),add=T,lwd=2,col="black",drawlabels=F)
+   contour(lon,lat,cyccorr[,,1],levels=c(-1,0.8,1),add=T,lwd=2,col="black",drawlabels=F)
   }
 }
 }

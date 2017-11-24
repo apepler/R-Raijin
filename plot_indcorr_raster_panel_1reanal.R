@@ -200,42 +200,44 @@ ColorBar(breaks,col1,subsampleg=1,vert=F)
 dev.off()
 }
 
+slist=c("MAM","JJA","SON","DJF")
+smons=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
 
-plot_indcorr_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),
-       snames=c("MJJASO","NDJFMA"),inames=c("SAM","AOI","NAO"),
+plot_indcorr_panel(1980,2016,seasons=smons,
+       snames=slist,inames=c("SAM","AOI","NAO"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_Extratrop_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
+       fout=paste0("paperfig_anticyccorr_Extratrop_ERAIpanel_proj100_rad10cv0.075_500km_4seasons.pdf"))
 
-plot_indcorr_panel(1982,2016,seasons=rbind(c(5,10),c(11,4)),
-       snames=c("MJJASO","NDJFMA"),inames=c("SOI","DMI","Hadley.SH"),
+plot_indcorr_panel(1982,2016,seasons=smons,
+       snames=slist,inames=c("SOI","DMI","Hadley.SH"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_Trop_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
+       fout=paste0("paperfig_anticyccorr_Trop_ERAIpanel_proj100_rad10cv0.075_500km_4seasons.pdf"))
 
-plot_indcorr_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),
-       snames=c("MJJASO","NDJFMA"),inames=c("SAM","AOI","NAO"),
+plot_indcorr_panel(1980,2016,seasons=smons,
+       snames=slist,inames=c("SAM","AOI","NAO"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout=paste0("paperfig_cyccorr_Extratrop_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
+       fout=paste0("paperfig_cyccorr_Extratrop_ERAIpanel_proj100_rad5cv0.15_500km_4seasons.pdf"))
 
-plot_indcorr_panel(1982,2016,seasons=rbind(c(5,10),c(11,4)),
-       snames=c("MJJASO","NDJFMA"),inames=c("SOI","DMI","Hadley.SH"),
+plot_indcorr_panel(1982,2016,seasons=smons,
+       snames=slist,inames=c("SOI","DMI","Hadley.SH"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout=paste0("paperfig_cyccorr_Trop_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
+       fout=paste0("paperfig_cyccorr_Trop_ERAIpanel_proj100_rad5cv0.15_500km_4seasons.pdf"))
 
-plot_indcorr_panel(1910,2014,seasons=rbind(c(5,10),c(11,4)),
-       snames=c("MJJASO","NDJFMA"),inames=c("SOI","STRI","STRP"),
+plot_indcorr_panel(1910,2014,seasons=smons,
+       snames=slist,inames=c("SOI","STRI","STRP"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="20CR",
        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout=paste0("paperfig_cyccorr_20CRpanel1910_proj100_rad5cv0.15_500km.pdf"))
+       fout=paste0("paperfig_cyccorr_20CRpanel1910_proj100_rad5cv0.15_500km_4seasons.pdf"))
 
-plot_indcorr_panel(1910,2014,seasons=rbind(c(5,10),c(11,4)),
-       snames=c("MJJASO","NDJFMA"),inames=c("SOI","STRI","STRP"),
+plot_indcorr_panel(1910,2014,seasons=smons,
+       snames=slist,inames=c("SOI","STRI","STRP"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="20CR",
        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_20CRpanel1910_proj100_rad10cv0.075_500km.pdf"))
+       fout=paste0("paperfig_anticyccorr_20CRpanel1910_proj100_rad10cv0.075_500km_4seasons.pdf"))
 
 
 

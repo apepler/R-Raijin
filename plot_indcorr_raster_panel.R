@@ -93,6 +93,7 @@ fend=c(".nc",".nc","_EnsMean.nc")
 ifile=switch(iname,
              SOI = "/short/eg3/asp561/Timeseries/SOI_18762016.csv",
              SAM = "/short/eg3/asp561/Timeseries/SAM_NOAA_19792016.csv",
+             SAM_M = "/short/eg3/asp561/Timeseries/sam_marshall.csv",
              STRI = "/short/eg3/asp561/Timeseries/STRI_18902016.csv",
              STRP = "/short/eg3/asp561/Timeseries/STRP_18902016.csv",
              Hadley.SH = "/short/eg3/asp561/Timeseries/HadleyCell.SH.csv",
@@ -185,15 +186,16 @@ dev.off()
 
 
 #for(ind in c("SAM","SOI","DMI","STRI","STRP","Hadley.SH","Hadley.AsiaPac","NAO","AOI"))
-for(ind in c("STRP","Hadley.SH","NAO","AOI"))
-{
-plot_indcorr_panel(1982,2014,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",iname=ind,
-       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr",ind,"_3reanals_proj100_rad10cv0.075_500km.pdf"))
+#for(ind in c("STRP","Hadley.SH","NAO","AOI"))
+#{
+ind="SAM_M"
+#plot_indcorr_panel(1960,2014,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",iname=ind,
+#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
+#       fout=paste0("paperfig_anticyccorr",ind,"_3reanals_proj100_rad10cv0.075_500km.pdf"))
 
-plot_indcorr_panel(1982,2014,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+plot_indcorr_panel(1960,2014,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",iname=ind,
        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
        fout=paste0("paperfig_cyccorr",ind,"_3reanals_proj100_rad5cv0.15_500km.pdf"))
-}
+
