@@ -86,6 +86,9 @@ ifile=switch(iname,
              STRP = "/short/eg3/asp561/Timeseries/STRP_18902016.csv",
              Hadley.SH = "/short/eg3/asp561/Timeseries/HadleyCell.SH.csv",
              Hadley.AsiaPac = "/short/eg3/asp561/Timeseries/HadleyCell.AsiaPac.csv",
+             Hadley.NH = "/short/eg3/asp561/Timeseries/HadleyCell.NH.csv",
+             NINO3.4 = "/short/eg3/asp561/Timeseries/NOAA.N34.OISST.monthly.csv",
+             NINO3.4_ERSST = "/short/eg3/asp561/Timeseries/NOAA.N34.ERSST5.monthly.csv",
              DMI = "/short/eg3/asp561/Timeseries/NOAA.DMI.monthly.csv",
              AOI = "/short/eg3/asp561/Timeseries/NOAA.AOI.csv",
              NAO = "/short/eg3/asp561/Timeseries/NOAA.NAO.csv",
@@ -204,40 +207,40 @@ slist=c("MAM","JJA","SON","DJF")
 smons=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
 
 plot_indcorr_panel(1980,2016,seasons=smons,
-       snames=slist,inames=c("SAM","AOI","NAO"),
+       snames=slist,inames=c("SAM","Hadley.SH","Hadley.NH","AOI"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_Extratrop_ERAIpanel_proj100_rad10cv0.075_500km_4seasons.pdf"))
+       fout=paste0("paperfig_anticyccorr_Extratrop2_ERAIpanel_proj100_rad10cv0.075_500km_4seasons.pdf"))
 
 plot_indcorr_panel(1982,2016,seasons=smons,
-       snames=slist,inames=c("SOI","DMI","Hadley.SH"),
+       snames=slist,inames=c("SOI","NINO3.4","DMI"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_Trop_ERAIpanel_proj100_rad10cv0.075_500km_4seasons.pdf"))
+       fout=paste0("paperfig_anticyccorr_Trop2_ERAIpanel_proj100_rad10cv0.075_500km_4seasons.pdf"))
 
 plot_indcorr_panel(1980,2016,seasons=smons,
-       snames=slist,inames=c("SAM","AOI","NAO"),
+       snames=slist,inames=c("SAM","Hadley.SH","Hadley.NH","AOI"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout=paste0("paperfig_cyccorr_Extratrop_ERAIpanel_proj100_rad5cv0.15_500km_4seasons.pdf"))
+       fout=paste0("paperfig_cyccorr_Extratrop2_ERAIpanel_proj100_rad5cv0.15_500km_4seasons.pdf"))
 
 plot_indcorr_panel(1982,2016,seasons=smons,
-       snames=slist,inames=c("SOI","DMI","Hadley.SH"),
+       snames=slist,inames=c("SOI","NINO3.4","DMI"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout=paste0("paperfig_cyccorr_Trop_ERAIpanel_proj100_rad5cv0.15_500km_4seasons.pdf"))
+       fout=paste0("paperfig_cyccorr_Trop2_ERAIpanel_proj100_rad5cv0.15_500km_4seasons.pdf"))
 
-plot_indcorr_panel(1910,2014,seasons=smons,
-       snames=slist,inames=c("SOI","STRI","STRP"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="20CR",
-       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout=paste0("paperfig_cyccorr_20CRpanel1910_proj100_rad5cv0.15_500km_4seasons.pdf"))
+#plot_indcorr_panel(1910,2014,seasons=smons,
+#       snames=slist,inames=c("SOI","STRI","STRP"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="20CR",
+#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+#       fout=paste0("paperfig_cyccorr_20CRpanel1910_proj100_rad5cv0.15_500km_4seasons.pdf"))
 
-plot_indcorr_panel(1910,2014,seasons=smons,
-       snames=slist,inames=c("SOI","STRI","STRP"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="20CR",
-       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_20CRpanel1910_proj100_rad10cv0.075_500km_4seasons.pdf"))
+#plot_indcorr_panel(1910,2014,seasons=smons,
+#       snames=slist,inames=c("SOI","STRI","STRP"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="20CR",
+#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
+#       fout=paste0("paperfig_anticyccorr_20CRpanel1910_proj100_rad10cv0.075_500km_4seasons.pdf"))
 
 
 
