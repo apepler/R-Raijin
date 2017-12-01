@@ -1,4 +1,4 @@
-## This is code that takes the 11 ensemble members of a POAMA run
+# This is code that takes the 11 ensemble members of a POAMA run
 ## Started on a particular day
 ## And outputs some interested results for further analysis
 
@@ -71,9 +71,9 @@ makesmooth<-function(data,winwid=5)
   return(tmp)
 }
 
-detrend<-function(x)
+detrend<-function(x,ind=seq(1,length(x)))
 {
-  regCoef=lm(x~seq(1,length(x)))
+  regCoef=lm(x~ind)
   return(resid(regCoef)) # Detrended
 }
 
@@ -102,7 +102,7 @@ return(ifile)
 }
 
 
-plot_indcorr_panel<-function(year1,year2,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),inames=c("SOI","SAM","AOI"),detrend=F,reanal="ERAI",
+plot_indcorr_panel<-function(year1,year2,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),inames=c("SOI","SAM","AOI"),detrend=F,reanal="ERAI",ind="SOI",
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",type2="_500km",
        type="cyclone",proj="proj100_rad5cv0.15",fout="output.pdf")
 {
@@ -164,6 +164,15 @@ par(mar=c(2,2,4,1))
 
    meanfreq=apply(freq,c(1,2),mean,na.rm=T)
    cyccorr<-array(NaN,c(length(lon),length(lat),2))
+   soi=read.csv(getInd(ind))
+   K=which(soi$Year%in%years2[I])
+    if(seasons[s,2]>=seasons[s,1])
+    {
+      soi2=apply(soi[K,(seasons[s,1]:seasons[s,2])+1],1,mean)
+    } else {
+      tmp=cbind(soi[K[-length(K)],(seasons[s,1]+1):13],soi[K[-1],2:(seasons[s,2]+1)])
+      soi2=c(apply(tmp,1,mean),NaN)
+   }
 
    for(ii in 1:inum)
    {
@@ -188,7 +197,7 @@ par(mar=c(2,2,4,1))
      if(!is.na(meanfreq[i,j]))
      if(meanfreq[i,j]>=0.1)
      {
-     if(detrend) a=cor.test(detrend(freq[i,j,]),detrend(index2),na.rm=T) else a=cor.test(freq[i,j,],index2,na.rm=T)
+      a=cor.test(detrend(freq[i,j,],soi2),detrend(index2,soi2),na.rm=T)
       cyccorr[i,j,1]=a$estimate
       cyccorr[i,j,2]=a$p.value
       }
@@ -210,42 +219,41 @@ dev.off()
 slist=c("MJJASO","NDJFMA")
 smons=rbind(c(5,10),c(11,4))
 
-plot_indcorr_panel(1980,2016,seasons=smons,
-       snames=slist,inames=c("Hadley.SH","Hadley.SH.Intensity","Hadley.NH","Hadley.NH.Intensity"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_Hadley_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
-
-plot_indcorr_panel(1980,2016,seasons=smons,
-       snames=slist,inames=c("Hadley.SH","Hadley.SH.Intensity","Hadley.NH","Hadley.NH.Intensity"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout=paste0("paperfig_cyccorr_Hadley_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
-
+#plot_indcorr_panel(1980,2016,seasons=smons,
+#       snames=slist,inames=c("Hadley.SH","Hadley.SH.Intensity","Hadley.NH","Hadley.NH.Intensity"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",ind="SOI",
+#       fout=paste0("paperfig_anticyccorr_HadleynoSOI_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
 
 #plot_indcorr_panel(1980,2016,seasons=smons,
-#       snames=slist,inames=c("SAM","Hadley.SH","Hadley.NH","AOI"),
+#       snames=slist,inames=c("Hadley.SH","Hadley.SH.Intensity","Hadley.NH","Hadley.NH.Intensity"),
 #       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-#       fout=paste0("paperfig_anticyccorr_Extratrop2_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
+#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",ind="SOI",
+#       fout=paste0("paperfig_cyccorr_HadleynoSOI_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
 
-#plot_indcorr_panel(1982,2016,seasons=smons,
-#       snames=slist,inames=c("SOI","NINO3.4","DMI"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-#       fout=paste0("paperfig_anticyccorr_Trop2_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
+plot_indcorr_panel(1980,2016,seasons=smons,
+       snames=slist,inames=c("SAM","AOI","STRI","STRP"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",ind="SOI",
+       fout=paste0("paperfig_anticyccorr_Extratrop3noSOI_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
 
-#plot_indcorr_panel(1980,2016,seasons=smons,
-#       snames=slist,inames=c("SAM","Hadley.SH","Hadley.NH","AOI"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#       fout=paste0("paperfig_cyccorr_Extratrop2_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
+plot_indcorr_panel(1982,2016,seasons=smons,
+       snames=slist,inames=c("NINO3.4","DMI"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",ind="SOI",
+       fout=paste0("paperfig_anticyccorr_Trop2noSOI_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
 
-#plot_indcorr_panel(1982,2016,seasons=smons,
-#       snames=slist,inames=c("SOI","NINO3.4","DMI"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#       fout=paste0("paperfig_cyccorr_Trop2_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
+plot_indcorr_panel(1980,2016,seasons=smons,
+       snames=slist,inames=c("SAM","AOI","STRI","STRP"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",ind="SOI",
+       fout=paste0("paperfig_cyccorr_Extratrop3noSOI_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
+
+plot_indcorr_panel(1982,2016,seasons=smons,
+       snames=slist,inames=c("NINO3.4","DMI"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",ind="SOI",
+       fout=paste0("paperfig_cyccorr_Trop2noSOI_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
 
 #plot_indcorr_panel(1910,2014,seasons=smons,
 #       snames=slist,inames=c("SOI","STRI","STRP"),
