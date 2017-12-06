@@ -8,9 +8,9 @@
 ## Also outputs a figure for each of the months in the file
 ## That shows the number of cyclones centred in that month
 ## Option to set a higher intensity threshold
-
+library(sp)
 library(ncdf4)
-extract_counts<-function(year1,year2,type="low",dir="/short/eg3/asp561/cts.dir/gcyc_out",thresh=0,dur=NA,outf=NA)
+extract_counts<-function(year1,year2,type="low",dir="/short/eg3/asp561/cts.dir/gcyc_out",thresh=0,dur=NA,outf=NA,outdir=dir,move=NA)
 {
 years=seq(year1,year2,1)
 months=1:12
@@ -26,13 +26,36 @@ fname=paste(dir,"/tracks_",years[y],".dat",sep="")
 read.table(fname, sep="",skip=1)->fixes
 colnames(fixes)=c("ID","Fix","Date","Time","Open","Lon","Lat","MSLP","CV","Meh")
 fixes$Year=floor(fixes$Date/10000)
-fixes=fixes[fixes$Year==unique(fixes$Year)[2],]
+if(length(unique(fixes$Year))>1) fixes=fixes[fixes$Year==unique(fixes$Year)[2],]
 fixes$Month=floor(fixes$Date/100)%%100
 fixes$Lat2=floor(fixes$Lat)
 fixes$Lon2=floor(fixes$Lon)%%360
 if(type=="high") fixes$CV=-fixes$CV
 
 ### Make table of events to combine with DJF for exclusion
+ if(!is.na(move))
+ {
+    fixes$Move<-NaN
+    I=which(fixes$Fix>1)
+    if(I[1]==1) I=I[-1]
+    for(i in 1:length(I)) fixes$Move[I[i]]=spDistsN1(cbind(fixes$Lon[I[i]],fixes$Lat[I[i]]),cbind(fixes$Lon[I[i]-1],fixes$Lat[I[i]-1]),longlat=T)
+
+    x<-rle(fixes$ID)
+    events<-data.frame(ID=x$values,Length=x$lengths,Date1=rep(0,length(x$values)),Move=rep(0,length(x$values)))
+    for(i in 1:length(events$ID))
+    {
+    events$Date1[i]=min(fixes$Date[fixes$ID==events$ID[i]])
+    I=which(fixes$ID==events[i,1])
+    events$Move[i]=spDistsN1(cbind(fixes$Lon[min(I)],fixes$Lat[min(I)]),
+                           cbind(fixes$Lon[max(I)],fixes$Lat[max(I)]),longlat=T)
+    }
+
+  events=events[events$Move>=move,]
+  include<-match(fixes[,1],events[,1])
+  J<-which(is.na(include)==0)
+  fixes=fixes[J,]
+ }
+
  if(!is.na(dur))
   {
   x<-rle(fixes$ID)
@@ -64,8 +87,8 @@ fillvalue <- 1e32
 cyc_def <- ncvar_def("systems","count",list(dimX,dimY,dimT1,dimT2),fillvalue,paste("Number of",type,"pressure systems during each month for each location in the Australian region"),prec="single")
 
 # create netCDF file and put arrays
-if(!is.na(outf)) ncfname <- paste(dir,outf,sep="") else
-  if(is.na(dur)) ncfname <- paste(dir,"/count_",type,"s","_cv",thresh,".nc",sep="") else ncfname<-paste(dir,"/count_",type,"s","_cv",thresh,"_D",dur,".nc",sep="")
+if(!is.na(outf)) ncfname <- paste(outdir,outf,sep="") else
+  if(is.na(dur)) ncfname <- paste(outdir,"/count_",type,"s","_cv",thresh,".nc",sep="") else ncfname<-paste(outdir,"/count_",type,"s","_cv",thresh,"_D",dur,".nc",sep="")
 ncout <- nc_create(ncfname,cyc_def) #force_v4=T)
 
 # put variables
@@ -81,13 +104,9 @@ nc_close(ncout)
 
 } # End function
 
-extract_counts(1990,2013,type="high",thresh=0.075,
-    dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/daily_proj240_highs_rad10cv0.075/",
-    outf="ERAIdaily_UM_globalanticyclones_proj240_rad10cv0.075.nc")
-
-extract_counts(1990,2013,type="low",thresh=0.15,
-    dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/daily_proj240_lows_rad5cv0.15/",
-    outf="ERAIdaily_UM_globalcyclones_proj240_rad5cv0.15.nc")
+#extract_counts(1980,2016,type="low",thresh=0.15,dur=2,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_rad2cv1.0_MWR/",
+#     outf="ERAI_UM_globalcyclones_proj100_rad2cv1_D2.nc")
 
 #extract_counts(1950,2016,type="high",thresh=0.075,dur=2,
 #    dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_highs_rad10cv0.075_v2/",
@@ -97,5 +116,20 @@ extract_counts(1990,2013,type="low",thresh=0.15,
 #    dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15_v2/",
 #    outf="NCEP1_UM_globalcyclones_proj100_rad5cv0.15_D2.nc")
 
+name="ACCESS1-3"
+basedir="/short/eg3/asp561/cts.dir/gcyc_out/CMIP5/"
 
+thresh="rad5cv0.15"
+#for(thresh in c("rad2cv1","rad5cv0.15"))
+#{
+#extract_counts(1950,2005,type="low",move=500,
+#    dir=paste0(basedir,name,"/historical/r1i1p1/proj100_lows_",thresh),
+#    outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#    outf=paste0(name,"_historical_r1i1p1_globalcyclones_proj100_",thresh,"_500km.nc"))
+
+extract_counts(2006,2100,type="low",move=500,
+    dir=paste0(basedir,name,"/rcp85/r1i1p1/proj100_lows_",thresh),
+    outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+    outf=paste0(name,"_rcp85_r1i1p1_globalcyclones_proj100_",thresh,"_500km.nc"))
+#}
 

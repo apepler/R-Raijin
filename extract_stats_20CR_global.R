@@ -12,7 +12,7 @@ dimnames(stats)[[2]]=1:12
 dimnames(stats)[[3]]=stypes
 dimnames(stats)[[4]]<-names<-c(1:56,"EnsMean","NCEP1","ERAI")
 
-dir="/short/eg3/asp561/cts.dir/gcyc_out"
+dir="/short/eg3/asp561/cts.dir/gcyc_out/"
 type="proj100_highs_rad10cv0.075/"
 
 outfile="UM_20CR_globalanticyclonestats_proj100_rad10cv0.075_500km.RData"
@@ -39,21 +39,19 @@ for(y in 1:length(years))
     for(i in 1:length(I)) fixes$Move[I[i]]=spDistsN1(cbind(fixes$Lon[I[i]],fixes$Lat[I[i]]),cbind(fixes$Lon[I[i]-1],fixes$Lat[I[i]-1]),longlat=T)
     
     x<-rle(fixes$ID)
-    events<-data.frame(ID=x$values,Length=x$lengths,Location=rep(0,length(x$values)),Location2=rep(0,length(x$values)),Date1=rep(0,length(x$values)),Move=rep(0,length(x$values)))
+    events<-data.frame(ID=x$values,Length=x$lengths,Date1=rep(0,length(x$values)),Move=rep(0,length(x$values)))
     for(i in 1:length(events$ID)) 
     {
-    events$Location[i]=sum(fixes$Location[fixes$ID==events$ID[i]])
-    events$Location2[i]=sum(fixes$Location2[fixes$ID==events$ID[i]])
-    events$Date1[i]=min(fixes$Date[fixes$ID==events$ID[i] & fixes$Location==1])
+    events$Date1[i]=min(fixes$Date[fixes$ID==events$ID[i]])
     I=which(fixes$ID==events[i,1])
     events$Move[i]=spDistsN1(cbind(fixes$Lon[min(I)],fixes$Lat[min(I)]),
                            cbind(fixes$Lon[max(I)],fixes$Lat[max(I)]),longlat=T)
 
     }
     events$Month=floor(events$Date1/100)%%100
-    events$MSLP=aggregate(fixes$MSLP,by=list(fixes$ID),FUN=max)
-    events$CV=aggregate(fixes$CV,by=list(fixes$ID),FUN=max)   
-    events$Lat=aggregate(fixes$Lat,by=list(fixes$ID),FUN=mean)
+    events$MSLP=aggregate(fixes$MSLP,by=list(fixes$ID),FUN=max)[,2]
+    events$CV=aggregate(fixes$CV,by=list(fixes$ID),FUN=max)[,2]   
+    events$Lat=aggregate(fixes$Lat,by=list(fixes$ID),FUN=mean)[,2]
  
     events=events[events$Move>=500,]
     include<-match(fixes[,1],events[,1])
@@ -117,16 +115,20 @@ for(n in 58:59)
   if(I[1]==1) I=I[-1]
   for(i in 1:length(I)) fixes$Move[I[i]]=spDistsN1(cbind(fixes$Lon[I[i]],fixes$Lat[I[i]]),cbind(fixes$Lon[I[i]-1],fixes$Lat[I[i]-1]),longlat=T)
   
-  x<-rle(fixes$ID)
-  events<-data.frame(ID=x$values,Length=x$lengths,Location=rep(0,length(x$values),Location2=rep(0,length(x$values))))
-  for(i in 1:length(events$ID)) events$Location[i]=sum(fixes$Location[fixes$ID==events$ID[i]])
-  for(i in 1:length(events$ID)) events$Location2[i]=sum(fixes$Location2[fixes$ID==events$ID[i]])
-  events$Date1<-0
-  for(i in 1:length(events$ID)) events$Date1[i]=min(fixes$Date[fixes$ID==events$ID[i] & fixes$Location==1])
-  events$Month=floor(events$Date1/100)%%100
-    events$MSLP=aggregate(fixes$MSLP,by=list(fixes$ID),FUN=max)
-    events$CV=aggregate(fixes$CV,by=list(fixes$ID),FUN=max)
-    events$Lat=aggregate(fixes$Lat,by=list(fixes$ID),FUN=mean)
+    x<-rle(fixes$ID)
+    events<-data.frame(ID=x$values,Length=x$lengths,Date1=rep(0,length(x$values)),Move=rep(0,length(x$values)))
+    for(i in 1:length(events$ID))
+    {
+    events$Date1[i]=min(fixes$Date[fixes$ID==events$ID[i]])
+    I=which(fixes$ID==events[i,1])
+    events$Move[i]=spDistsN1(cbind(fixes$Lon[min(I)],fixes$Lat[min(I)]),
+                           cbind(fixes$Lon[max(I)],fixes$Lat[max(I)]),longlat=T)
+
+    }
+    events$Month=floor(events$Date1/100)%%100
+    events$MSLP=aggregate(fixes$MSLP,by=list(fixes$ID),FUN=max)[,2]
+    events$CV=aggregate(fixes$CV,by=list(fixes$ID),FUN=max)[,2]
+    events$Lat=aggregate(fixes$Lat,by=list(fixes$ID),FUN=mean)[,2]
 
     events=events[events$Move>=500,]
     include<-match(fixes[,1],events[,1])
