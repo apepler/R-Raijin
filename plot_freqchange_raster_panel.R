@@ -93,6 +93,7 @@ lon=seq(0,359.5)  ### Can always combine into bigger cells later
 ss=length(snames)
 breaks=c(-1000,-100,-75,-50,-25,-10,0,10,25,50,75,100,1000)
 col1=col_anom(length(breaks)-1)
+pnum=1
 
 if(year1<1979)
 {
@@ -146,9 +147,10 @@ for(n in startN:3)
    cyctrend[,,3]=100*((cyctrend[,,2]/cyctrend[,,1])-1)
 
    image(lon,lat,cyctrend[,,3],breaks=breaks,col=col1,xlab="",ylab="",
-          main=paste("% change in",snames[s],type,":",reanals[n]))
+          main=paste0(letters[pnum],") % change in ",snames[s]," ",type," frequency: ",reanals[n]))
    map('world2',add=T)   
    contour(lon,lat,cyctrend[,,4]<0.05,levels=c(-100,0.05,100),add=T,lwd=2,col="black",drawlabels=F)
+  pnum=pnum+1
   }
 }
 
@@ -157,15 +159,25 @@ dev.off()
 }
  
  
- plot_freqchange_panel(1960,2016,year3=1997,year4=1979,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+ plot_freqchange_panel(1960,2016,year3=1997,year4=1979,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
         type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-        fout="paperfig_anticycchange_3reanals_proj100_rad10cv0.075_500km")
+        fout="paperfig_anticycchange_3reanals_proj100_rad10cv0.075_500km_4seasons")
  
-plot_freqchange_panel(1960,2016,year3=1997,year4=1979,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+plot_freqchange_panel(1960,2016,year3=1997,year4=1979,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
         type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-        fout="paperfig_cycchcange_3reanals_proj100_rad5cv0.15_500km")
+        fout="paperfig_cycchcange_3reanals_proj100_rad5cv0.15_500km_4seasons")
+
+ plot_freqchange_panel(1960,2016,year3=1997,year4=1979,seasons=rbind(c(6,8),c(12,2)),snames=c("JJA","DJF"),
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
+        fout="paperfig_anticycchange_3reanals_proj100_rad10cv0.075_500km_jjadjf")
+
+plot_freqchange_panel(1960,2016,year3=1997,year4=1979,seasons=rbind(c(6,8),c(12,2)),snames=c("JJA","DJF"),
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+        fout="paperfig_cycchcange_3reanals_proj100_rad5cv0.15_500km_jjadjf")
  
 #plot_freqchange_panel(1980,2016,year3=1997,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",

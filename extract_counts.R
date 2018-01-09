@@ -104,9 +104,21 @@ nc_close(ncout)
 
 } # End function
 
-#extract_counts(1980,2016,type="low",thresh=0.15,dur=2,
-#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_rad2cv1.0_MWR/",
-#     outf="ERAI_UM_globalcyclones_proj100_rad2cv1_D2.nc")
+extract_counts(1980,2016,type="high",thresh=0.075,dur=2,
+     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
+     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.075_D2.nc")
+
+extract_counts(1980,2016,type="high",thresh=0.15,dur=2,
+     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
+     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.15_D2.nc")
+
+#extract_counts(1980,2016,type="low",thresh=0.15,move=500,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad2cv1/",
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf="ERAI_UM_globalcyclones_proj100_rad2cv1_500km.nc")
+
 
 #extract_counts(1950,2016,type="high",thresh=0.075,dur=2,
 #    dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_highs_rad10cv0.075_v2/",
@@ -116,10 +128,10 @@ nc_close(ncout)
 #    dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15_v2/",
 #    outf="NCEP1_UM_globalcyclones_proj100_rad5cv0.15_D2.nc")
 
-name="ACCESS1-3"
-basedir="/short/eg3/asp561/cts.dir/gcyc_out/CMIP5/"
+#name="ACCESS1-3"
+#basedir="/short/eg3/asp561/cts.dir/gcyc_out/CMIP5/"
 
-thresh="rad5cv0.15"
+#thresh="rad5cv0.15"
 #for(thresh in c("rad2cv1","rad5cv0.15"))
 #{
 #extract_counts(1950,2005,type="low",move=500,
@@ -127,9 +139,9 @@ thresh="rad5cv0.15"
 #    outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
 #    outf=paste0(name,"_historical_r1i1p1_globalcyclones_proj100_",thresh,"_500km.nc"))
 
-extract_counts(2006,2100,type="low",move=500,
-    dir=paste0(basedir,name,"/rcp85/r1i1p1/proj100_lows_",thresh),
-    outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-    outf=paste0(name,"_rcp85_r1i1p1_globalcyclones_proj100_",thresh,"_500km.nc"))
+#extract_counts(2006,2100,type="low",move=500,
+#    dir=paste0(basedir,name,"/rcp85/r1i1p1/proj100_lows_",thresh),
+#    outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#    outf=paste0(name,"_rcp85_r1i1p1_globalcyclones_proj100_",thresh,"_500km.nc"))
 #}
 

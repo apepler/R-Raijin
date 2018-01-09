@@ -73,7 +73,7 @@ makesmooth<-function(data,winwid=5)
 
 
 plot_freq_panel<-function(year1,year2,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",type2="_500km",
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",reanal="ERAI",latlim=c(-90,90),lonlim=c(0,360),
        type="cyclone",proj="proj100_rad5cv0.15",fout="output")
 {
 
@@ -81,33 +81,28 @@ years=seq(year1,year2,1)
 
 if(year1<1979) startN=2 else startN=1
 
-reanals=c("ERAI","NCEP1","20CR")
-varnames=c("systems","systems","EnsMean")
-fend=c(".nc",".nc","_EnsMean.nc")
+if(reanal=="20CR") {
+varname="EnsMean"
+fend="_EnsMean.nc" 
+} else {
+varname="systems"
+fend=".nc"
+}
 
 lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(snames)
-#breaks=c(0,0.05,seq(0.25,1,0.25),1.5,2,1000)
 breaks=c(0,0.05,seq(0.1,1,0.1),1000)
 col1=col_val(length(breaks)-1)
 pnum=1
-if(year1<1979)
-{
-pdf(file=fout,width=4*ss,height=6.3)
-layout(rbind(seq(1,ss),seq(ss+1,ss*2),rep(ss*2+1,ss)),height=c(1,1,0.3))
-} else {
-pdf(file=paste0(fout,".pdf"),width=4*ss,height=9)
-layout(rbind(seq(1,ss),seq(ss+1,ss*2),seq(ss*2+1,ss*3),rep(ss*3+1,ss)),height=c(1,1,1,0.3))
-}
+pdf(file=fout,width=2*ss,height=6.3)
+layout(rbind(seq(1,ss/2),seq((ss/2)+1,ss),rep(ss+1,ss/2)),height=c(1,1,0.3))
 
 par(mar=c(2,2,4,1))
 
-for(n in startN:3)
-{
-  a=nc_open(paste0(dir,"/",reanals[n],"_UM_global",type,"s_",proj,type2,fend[n]))
-  systems=ncvar_get(a,varnames[n])
+  a=nc_open(paste0(dir,"/",reanal,"_UM_global",type,"s_",proj,fend))
+  systems=ncvar_get(a,varname)
   years2=ncvar_get(a,"year")
 
   I=which(years2%in%years)
@@ -128,47 +123,37 @@ for(n in startN:3)
    meanfreq=apply(freq,c(1,2),mean,na.rm=T)
    meanfreq2=makesmooth(meanfreq)
 
-   image(lon,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",
-          main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency: ",reanals[n]))
+   if(lonlim[1]<0) {
+   lon2=seq(-179.5,179.5,1)
+   library(abind)
+   meanfreq2=abind(meanfreq[181:360,],meanfreq[1:180,],along=1)
+   image(lon2,lat,meanfreq2,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
+          main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency"))
+   map('world',add=T)
+   contour(lon2,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   } else {
+   image(lon,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
+          main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency"))
    map('world2',add=T)   
-   contour(lon,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   contour(lon,lat,meanfreq,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   }
    pnum=pnum+1
   }
-}
+
 
 ColorBar(breaks,col1,subsampleg=1,vert=F)
 dev.off()
 }
- 
- 
-plot_freq_panel(1980,2016,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_4seasons.pdf")
-
-plot_freq_panel(1980,2016,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_4seasons.pdf")
-
-plot_freq_panel(1980,2016,seasons=rbind(c(6,8),c(12,2)),snames=c("JJA","DJF"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_jjadjf.pdf")
-
-plot_freq_panel(1980,2016,seasons=rbind(c(6,8),c(12,2)),snames=c("JJA","DJF"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_jjadjf.pdf")
-
 
 #plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-#        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-#        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_v2.pdf")
+#        type="anticyclone",reanal="ERAI",pnames=c("2 fixes","500km movement"),
+#        proj=c("proj100_rad10cv0.075_D2","proj100_rad10cv0.075_500km"),latlim=c(20,60),lonlim=c(-30,50),
+#        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_threshcomp_medit.pdf")
 
-#plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
-#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-#        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_v2.pdf")
+plot_freq_panel(1980,2016,seasons=cbind(c(12,3,6,9),c(2,5,8,11)),snames=c("DJF","MAM","JJA","SON"),
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+        type="anticyclone",reanal="ERAI",proj="proj100_rad10cv0.075_D2",
+        latlim=c(20,60),lonlim=c(-30,50),
+        fout="paperfig_anticycfreq_ERAI_rad5cv0.075_seasonal_D2_medit.pdf")
 

@@ -13,9 +13,9 @@ dimnames(stats)[[4]]=stypes
 dimnames(stats)[[5]]<-names<-c(1:56,"EnsMean","NCEP1","ERAI")
 
 dir="/short/eg3/asp561/cts.dir/gcyc_out/"
-type="proj100_lows_rad5cv0.15/"
+type="proj100_highs_rad10cv0.075/"
 
-outfile="UM_20CR_globalcyclones_statsbylat_proj100_rad5cv0.15_500km.RData"
+outfile="UM_20CR_globalanticyclones_statsbylat_proj100_rad10cv0.075_500km.RData"
 
 for(y in 1:length(years))
 {

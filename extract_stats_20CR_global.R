@@ -2,7 +2,7 @@ years=seq(1851,2014)
 library(ncdf4)
 library(sp)
 
-stypes1=c("Events","Event.Length","Event.Move","Event.MSLP","Event.CV","Fixes","Fix.MSLP","Fix.CV","Fix.Radius","Fix.Depth","Events.1020","Events.D8")
+stypes1=c("Events","Event.Length","Event.Move","Event.MSLP","Event.CV","Fixes","Fix.MSLP","Fix.CV","Fix.Radius","Fix.Depth","Events.1000","Events.D8")
 
 stypes=c(stypes1,paste0("NH.",stypes1),paste0("SH.",stypes1))
 
@@ -13,9 +13,9 @@ dimnames(stats)[[3]]=stypes
 dimnames(stats)[[4]]<-names<-c(1:56,"EnsMean","NCEP1","ERAI")
 
 dir="/short/eg3/asp561/cts.dir/gcyc_out/"
-type="proj100_highs_rad10cv0.075/"
+type="proj100_lows_rad5cv0.15/"
 
-outfile="UM_20CR_globalanticyclonestats_proj100_rad10cv0.075_500km.RData"
+outfile="UM_20CR_globalcyclonestats_proj100_rad5cv0.15_500km.RData"
 
 for(y in 1:length(years))
 {
@@ -86,7 +86,7 @@ for(y in 1:length(years))
         stats[y,m,9+lntt,n]=mean(fixes$Radius[J])
         stats[y,m,10+lntt,n]=mean(fixes$Depth[J])
 
-        stats[y,m,11+lntt,n]=length(which(events$MSLP[I]>=1020))
+        stats[y,m,11+lntt,n]=length(which(events$MSLP[I]<=1000))
         stats[y,m,12+lntt,n]=length(which(events$Length[I]>=8))
 
       }
@@ -163,7 +163,7 @@ for(n in 58:59)
         stats[y,m,9+lntt,n]=mean(fixes$Radius[J])
         stats[y,m,10+lntt,n]=mean(fixes$Depth[J])
 
-        stats[y,m,11+lntt,n]=length(which(events$MSLP[I]>=1020))
+        stats[y,m,11+lntt,n]=length(which(events$MSLP[I]<=1000))
         stats[y,m,12+lntt,n]=length(which(events$Length[I]>=8))
 
       }

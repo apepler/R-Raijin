@@ -114,6 +114,8 @@ if(!is.na(cv[n])) fixes=fixes[fixes$CV>=cv[n],]
 if(n==1 & !is.na(lslp)) fixes=fixes[fixes$MSLP<=lslp,]
 if(n==2 & !is.na(hslp)) fixes=fixes[fixes$MSLP>=hslp,]
 
+fixes=fixes[fixes$Fix==1,]
+
 if(month2>=month1)
  {
   I=which(fixes$Month>=month1 & fixes$Month<=month2)
@@ -145,9 +147,10 @@ meanfreq=apply(systems,c(1,2,4),mean,na.rm=T) # So comparable to other figures
 
 ### Plot
 
-type=c("Cyclone Frequency (Cyclones/deg^2)","Anticyclone Frequency (Anticyclones/deg^2)")
+type=c("Cyclogenesis Frequency (Cyclones/deg^2)","Anticyclogenesis Frequency (Anticyclones/deg^2)")
 
-if(month1==1 & month2==12) breaks=c(0,0.05,seq(0.5,2,0.5),3:5,1000) else breaks=c(0,0.05,seq(0.25,1,0.25),1.5,2,1000)
+if(month1==1 & month2==12) breaks=c(seq(0,0.5,0.05),1000) else breaks=c(seq(0,0.3,0.025),1000)
+
 print("Plotting")
 col1=col_val(length(breaks)-1)
 
@@ -180,16 +183,11 @@ seas=c("","_MAM","_JJA","_SON","_DJF","_MJJASO","_NDJFMA")
 m1=c(1,3,6,9,12,5,11)
 m2=c(12,5,8,11,2,10,4)
 
-for(s in c(1,6,7))
+for(s in 1:7)
 {
 
 
-plot_counts(1980,2016,dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",anti="proj100_highs_rad10cv0.075",cyc="proj100_lows_rad5cv0.15",fout=paste("ERAI_UM_meanfreq_1980-2016_cv",seas[s],sep=""),month1=m1[s],month2=m2[s],dur=2,hcv=0.15,lcv=0.25)
-
-#plot_counts(1980,2016,dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",anti="proj100_highs_rad10cv0.075",cyc="proj100_lows_rad5cv0.15",fout=paste("ERAI_UM_meanfreq_1980-2016_slp",seas[s],sep=""),month1=m1[s],month2=m2[s],dur=2,hslp=1020,lslp=1000)
-
-#plot_counts(1980,2016,dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",anti="proj100_highs_rad10cv0.075",cyc="proj100_lows_rad5cv0.15",fout=paste("ERAI_UM_meanfreq_1980-2016_500km",seas[s],sep=""),month1=m1[s],month2=m2[s],dur=2,move=500)
-
+plot_counts(1980,2016,dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",anti="proj100_highs_rad10cv0.075",cyc="proj100_lows_rad5cv0.15",fout=paste("ERAI_UM_genfreq_1980-2016_500km",seas[s],sep=""),month1=m1[s],month2=m2[s],dur=2,move=500)
 
 }
 
