@@ -18,7 +18,7 @@
 
 ##You will need to set the location to where the track files are stored.
 
-get_austevents<-function(yearS,yearE,output,type="high")
+get_austevents<-function(yearS,yearE,output,type="high",closed=T)
 {
 
   ##Files with ECL track data for required years & preceding summers.  
@@ -29,6 +29,9 @@ get_austevents<-function(yearS,yearE,output,type="high")
   ##And the extra ones at the start into a "Dec" file
 
   read.table(fname1[1], sep="",skip=0)->data
+  I<-which(data[,6]>=80 & data[,6]<=190 & data[,7]<0) 
+  data=data[I,]
+
   yy=floor(data[,3]/10000)
   yy2=unique(yy)
   if(length(yy2)>1)
@@ -51,6 +54,9 @@ get_austevents<-function(yearS,yearE,output,type="high")
   {
     print(fname1[i])
     read.table(fname1[i], sep="",skip=0)->data
+    I<-which(data[,6]>=80 & data[,6]<=190 & data[,7]<0)                         
+    data=data[I,]
+
     yy=floor(data[,3]/10000)
     yy2=unique(yy)
     if(length(yy2)>1)
@@ -146,6 +152,8 @@ get_austevents<-function(yearS,yearE,output,type="high")
   {
     J<-which(fixes[,1]==events[I[i],1])
     K<-which(fixesDEC[,3]==fixes[J[1],3] & fixesDEC[,4]==fixes[J[1],4] & fixesDEC[,7]==fixes[J[1],7] & fixesDEC[,6]==fixes[J[1],6])
+    if(length(K)>0)
+    {
     L<-which(fixes[,3]==fixesDEC[K-1,3] & fixes[,4]==fixesDEC[K-1,4] & fixes[,7]==fixesDEC[K-1,7] & fixes[,6]==fixesDEC[K-1,6])
     if(length(L)==1)
     {
@@ -167,6 +175,7 @@ get_austevents<-function(yearS,yearE,output,type="high")
 
       rlist=c(rlist,I[i]) 
     }
+    }
   }
 
   if(length(rlist)>1) events2=events2[-rlist[!is.na(rlist)],]
@@ -176,7 +185,7 @@ get_austevents<-function(yearS,yearE,output,type="high")
   
   ## Take only the events where at least one fix is closed & in the region
   
-  I<-which(events2[,9]>0 & events2[,10]==0)
+  if(closed) I<-which(events2[,9]>0 & events2[,10]==0) else I<-which(events2[,9]>0) 
   events3<-events2[I,]
   include<-match(fixes[,1],events3[,1])
   J<-which(is.na(include)==0)
@@ -211,11 +220,11 @@ get_austevents<-function(yearS,yearE,output,type="high")
 #setwd('/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_highs_rad10cv0.075_v2/')
 #get_austevents(1950,2016,"UM_highs_NCEP1_proj100_rad10cv0.075",type="low")
 
-setwd('/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15_v2/')
-get_austevents(2016,2017,"UM_lows_NCEP1_proj100_rad5cv0.15_update",type="low")
+setwd('/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/')
+get_austevents(1980,2016,"UM_highs_ERAI_proj100_rad10cv0.075_all",type="high",closed=F)
 
 #setwd('/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/')
-#get_austevents(1980,2016,"UM_lows_ERAI_proj100_rad5cv0.15",type="low")
+#get_austevents(1990,2012,"UM_lows_ERAI_proj100_rad5cv0.15_all",type="low",closed=F)
 
 #setwd('/short/eg3/asp561/cts.dir/gcyc_out/20CR/EnsMean/proj100_lows_rad5cv0.15/')
 #get_austevents(1950,1979,"UM_lows_20CR_proj100_rad5cv0.15_5079",type="high")

@@ -205,23 +205,22 @@ ColorBar(breaks,col1,subsampleg=1,vert=F)
 dev.off()
 }
 
-#slist=c("MAM","JJA","SON","DJF")
-#smons=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
+slist2=c("MAM","JJA","SON","DJF")
+smons2=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
 slist=c("MJJASO","NDJFMA")
 smons=rbind(c(5,10),c(11,4))
 
-plot_indcorr_panel(1980,2016,seasons=smons,
-       snames=slist,inames=c("Hadley.SH","Hadley.SH.Intensity","Hadley.NH","Hadley.NH.Intensity"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_Hadley_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
+#plot_indcorr_panel(1980,2016,seasons=smons,
+#       snames=slist,inames=c("Hadley.SH","Hadley.SH.Intensity","Hadley.NH","Hadley.NH.Intensity"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
+#       fout=paste0("paperfig_anticyccorr_Hadley_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
 
-plot_indcorr_panel(1980,2016,seasons=smons,
-       snames=slist,inames=c("Hadley.SH","Hadley.SH.Intensity","Hadley.NH","Hadley.NH.Intensity"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout=paste0("paperfig_cyccorr_Hadley_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
-
+#plot_indcorr_panel(1980,2016,seasons=smons,
+#       snames=slist,inames=c("Hadley.SH","Hadley.SH.Intensity","Hadley.NH","Hadley.NH.Intensity"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+#       fout=paste0("paperfig_cyccorr_Hadley_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
 
 #plot_indcorr_panel(1980,2016,seasons=smons,
 #       snames=slist,inames=c("SAM","Hadley.SH","Hadley.NH","AOI"),
@@ -235,17 +234,29 @@ plot_indcorr_panel(1980,2016,seasons=smons,
 #       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
 #       fout=paste0("paperfig_anticyccorr_Trop2_ERAIpanel_proj100_rad10cv0.075_500km.pdf"))
 
-#plot_indcorr_panel(1980,2016,seasons=smons,
-#       snames=slist,inames=c("SAM","Hadley.SH","Hadley.NH","AOI"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#       fout=paste0("paperfig_cyccorr_Extratrop2_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
+plot_indcorr_panel(1980,2016,seasons=smons,
+       snames=slist,inames=c("SAM","Hadley.SH","Hadley.NH","AOI"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+       fout=paste0("paperfig_cyccorr_Extratrop2_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
 
-#plot_indcorr_panel(1982,2016,seasons=smons,
-#       snames=slist,inames=c("SOI","NINO3.4","DMI"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#       fout=paste0("paperfig_cyccorr_Trop2_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
+plot_indcorr_panel(1982,2016,seasons=smons,
+       snames=slist,inames=c("SOI","NINO3.4","DMI"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+       fout=paste0("paperfig_cyccorr_Trop2_ERAIpanel_proj100_rad5cv0.15_500km.pdf"))
+
+plot_indcorr_panel(1980,2016,seasons=smons2,
+       snames=slist2,inames=c("SAM","Hadley.SH","Hadley.NH","AOI"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+       fout=paste0("paperfig_cyccorr_Extratrop2_ERAIpanel_proj100_rad5cv0.15_500km_4seasons.pdf"))
+
+plot_indcorr_panel(1982,2016,seasons=smons2,
+       snames=slist2,inames=c("SOI","NINO3.4","DMI"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
+       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+       fout=paste0("paperfig_cyccorr_Trop2_ERAIpanel_proj100_rad5cv0.15_500km_4seasons.pdf"))
 
 #plot_indcorr_panel(1910,2014,seasons=smons,
 #       snames=slist,inames=c("SOI","STRI","STRP"),

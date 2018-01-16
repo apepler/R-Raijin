@@ -141,34 +141,34 @@ dev.off()
 }
  
  
-plot_freq_panel(1980,2016,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_4seasons.pdf")
+#plot_freq_panel(1980,2016,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
+#        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_4seasons")
 
 plot_freq_panel(1980,2016,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
         type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_4seasons.pdf")
+        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_4seasons")
 
-plot_freq_panel(1980,2016,seasons=rbind(c(6,8),c(12,2)),snames=c("JJA","DJF"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_jjadjf.pdf")
+#plot_freq_panel(1980,2016,seasons=rbind(c(6,8),c(12,2)),snames=c("JJA","DJF"),
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
+#        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_jjadjf")
 
-plot_freq_panel(1980,2016,seasons=rbind(c(6,8),c(12,2)),snames=c("JJA","DJF"),
+plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
         type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_jjadjf.pdf")
+        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_v2")
 
 
 #plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
 #        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-#        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_v2.pdf")
+#        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_v2")
 
 #plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
 #        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_v2.pdf")
+#        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_v2")
 

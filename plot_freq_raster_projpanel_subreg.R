@@ -161,7 +161,7 @@ dev.off()
 
 plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="anticyclone",reanal="ERAI",pnames=c("rad10cv0.075","rad5cv0.075"),
-        proj=c("proj100_rad10cv0.075_D2","proj100_rad5cv0.075_D2"),latlim=c(20,60),lonlim=c(-30,50),
-        fout="paperfig_anticycfreq_ERAI_projcomp_D2_medit.pdf")
+        type="cyclone",reanal="ERAI",pnames=c("All","Closed Only"),
+        proj=c("proj100_rad5cv0.15_500km_open","proj100_rad5cv0.15_500km"),latlim=c(-50,-10),lonlim=c(100,180),
+        fout="paperfig_cycfreq_ERAI_opencomp500km_aust.pdf")
 

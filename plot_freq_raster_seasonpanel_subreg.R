@@ -73,7 +73,8 @@ makesmooth<-function(data,winwid=5)
 
 
 plot_freq_panel<-function(year1,year2,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",reanal="ERAI",latlim=c(-90,90),lonlim=c(0,360),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",reanal="ERAI",
+       latlim=c(-90,90),lonlim=c(0,360),breaks=c(0,0.05,seq(0.1,1,0.1),1000),
        type="cyclone",proj="proj100_rad5cv0.15",fout="output")
 {
 
@@ -93,7 +94,6 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(snames)
-breaks=c(0,0.05,seq(0.1,1,0.1),1000)
 col1=col_val(length(breaks)-1)
 pnum=1
 pdf(file=fout,width=2*ss,height=6.3)
@@ -125,9 +125,10 @@ par(mar=c(2,2,4,1))
 
    if(lonlim[1]<0) {
    lon2=seq(-179.5,179.5,1)
-   library(abind)
-   meanfreq2=abind(meanfreq[181:360,],meanfreq[1:180,],along=1)
-   image(lon2,lat,meanfreq2,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
+   library(abind)   
+   meanfreq=abind(meanfreq[181:360,],meanfreq[1:180,],along=1)
+   meanfreq2=makesmooth(meanfreq)
+   image(lon2,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
           main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency"))
    map('world',add=T)
    contour(lon2,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
@@ -135,7 +136,7 @@ par(mar=c(2,2,4,1))
    image(lon,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
           main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency"))
    map('world2',add=T)   
-   contour(lon,lat,meanfreq,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   contour(lon,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
    }
    pnum=pnum+1
   }
@@ -153,7 +154,8 @@ dev.off()
 
 plot_freq_panel(1980,2016,seasons=cbind(c(12,3,6,9),c(2,5,8,11)),snames=c("DJF","MAM","JJA","SON"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="anticyclone",reanal="ERAI",proj="proj100_rad10cv0.075_D2",
-        latlim=c(20,60),lonlim=c(-30,50),
-        fout="paperfig_anticycfreq_ERAI_rad5cv0.075_seasonal_D2_medit.pdf")
+        type="anticyclone",reanal="ERAI",proj="proj100_rad5cv0.075_500km",
+        latlim=c(20,60),lonlim=c(-30,50),breaks=c(0,0.05,seq(0.1,1,0.1),1000),
+        fout="paperfig_anticycfreq_ERAI_rad5cv0.075_seasonal_500km_medit.pdf")
+
 

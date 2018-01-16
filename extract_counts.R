@@ -10,7 +10,7 @@
 ## Option to set a higher intensity threshold
 library(sp)
 library(ncdf4)
-extract_counts<-function(year1,year2,type="low",dir="/short/eg3/asp561/cts.dir/gcyc_out",thresh=0,dur=NA,outf=NA,outdir=dir,move=NA)
+extract_counts<-function(year1,year2,type="low",dir="/short/eg3/asp561/cts.dir/gcyc_out",thresh=0,dur=NA,outf=NA,outdir=dir,move=NA,closed=F)
 {
 years=seq(year1,year2,1)
 months=1:12
@@ -66,6 +66,7 @@ if(type=="high") fixes$CV=-fixes$CV
   fixes=fixes[J,]
   }
 fixes=fixes[fixes$CV>=thresh,]
+if(closed) fixes=fixes[(fixes$Open==0 | fixes$Open==10),] # Remove all open systems
 tmp=table(factor(fixes$Lon2,levels=0:359),factor(fixes$Lat2,levels=-90:89),fixes$Month)
 systems[,,y,]=tmp
 print(mean(systems[,,y,],na.rm=T))
@@ -104,29 +105,25 @@ nc_close(ncout)
 
 } # End function
 
-extract_counts(1980,2016,type="high",thresh=0.075,dur=2,
-     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
-     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.075_D2.nc")
-
-extract_counts(1980,2016,type="high",thresh=0.15,dur=2,
-     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
-     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.15_D2.nc")
-
-#extract_counts(1980,2016,type="low",thresh=0.15,move=500,
-#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad2cv1/",
+#extract_counts(1980,2016,type="high",thresh=0.075,dur=2,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-#     outf="ERAI_UM_globalcyclones_proj100_rad2cv1_500km.nc")
+#     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.075_D2.nc")
+#
+#extract_counts(1980,2016,type="high",thresh=0.15,dur=2,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.15_D2.nc")
 
+#extract_counts(1980,2016,type="low",thresh=0.15,move=500,closed=T,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf="ERAI_UM_globalcyclones_proj100_rad5cv0.15_500km.nc")
 
-#extract_counts(1950,2016,type="high",thresh=0.075,dur=2,
-#    dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_highs_rad10cv0.075_v2/",
-#    outf="NCEP1_UM_globalanticyclones_proj100_rad10cv0.075_D2.nc")
-
-#extract_counts(1950,2016,type="low",thresh=0.15,dur=2,
-#    dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15_v2/",
-#    outf="NCEP1_UM_globalcyclones_proj100_rad5cv0.15_D2.nc")
+extract_counts(1950,2016,type="low",thresh=0.15,move=500,closed=T,
+     dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15/",
+     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+     outf="NCEP1_UM_globalcyclones_proj100_rad5cv0.15_500km.nc")
 
 #name="ACCESS1-3"
 #basedir="/short/eg3/asp561/cts.dir/gcyc_out/CMIP5/"
