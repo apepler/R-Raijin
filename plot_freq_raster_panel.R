@@ -89,8 +89,8 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(snames)
-#breaks=c(0,0.05,seq(0.25,1,0.25),1.5,2,1000)
-breaks=c(0,0.05,seq(0.1,1,0.1),1000)
+breaks=c(0,0.05,seq(0.25,1,0.25),1.5,2,1000)
+#breaks=c(0,0.05,seq(0.1,1,0.1),1000)
 col1=col_val(length(breaks)-1)
 pnum=1
 if(year1<1979)
@@ -146,10 +146,10 @@ dev.off()
 #        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
 #        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_4seasons")
 
-plot_freq_panel(1980,2016,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_4seasons")
+#plot_freq_panel(1980,2016,seasons=rbind(c(3,5),c(6,8),c(9,11),c(12,2)),snames=c("MAM","JJA","SON","DJF"),
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+#        fout="paperfig_cycfreq_3reanals_proj100_rad5cv0.15_500km_4seasons")
 
 #plot_freq_panel(1980,2016,seasons=rbind(c(6,8),c(12,2)),snames=c("JJA","DJF"),
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",

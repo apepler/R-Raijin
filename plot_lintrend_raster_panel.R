@@ -148,20 +148,20 @@ ColorBar(breaks,col1,subsampleg=1,vert=F)
 dev.off()
 }
 
-plot_lintrend_panel(1950,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout="paperfig_anticyclintrend5016_3reanals_proj100_rad10cv0.075_500km.pdf")
+#plot_lintrend_panel(1950,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
+#       fout="paperfig_anticyclintrend5016_3reanals_proj100_rad10cv0.075_500km.pdf")
 
-plot_lintrend_panel(1950,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout="paperfig_cyclintrend5016_3reanals_proj100_rad5cv0.15_500km.pdf")
+#plot_lintrend_panel(1950,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+#       fout="paperfig_cyclintrend5016_3reanals_proj100_rad5cv0.15_500km.pdf")
 
-plot_lintrend_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout="paperfig_anticyclintrend8016_3reanals_proj100_rad10cv0.075_500km.pdf")
+#plot_lintrend_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
+#       fout="paperfig_anticyclintrend8016_3reanals_proj100_rad10cv0.075_500km.pdf")
 
 plot_lintrend_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",

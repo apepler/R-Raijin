@@ -115,15 +115,20 @@ nc_close(ncout)
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
 #     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.15_D2.nc")
 
-#extract_counts(1980,2016,type="low",thresh=0.15,move=500,closed=T,
-#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",
-#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-#     outf="ERAI_UM_globalcyclones_proj100_rad5cv0.15_500km.nc")
-
-extract_counts(1950,2016,type="low",thresh=0.15,move=500,closed=T,
-     dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15/",
+extract_counts(1990,2013,type="low",thresh=0.25,closed=T,
+     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/daily_proj240_lows_rad5cv0.15/",
      outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf="NCEP1_UM_globalcyclones_proj100_rad5cv0.15_500km.nc")
+     outf="ERAIdaily_UM_globalcyclones_proj240_rad5cv0.25.nc")
+
+extract_counts(1990,2013,type="low",thresh=0.25,closed=F,
+     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/daily_proj240_lows_rad5cv0.15/",
+     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+     outf="ERAIdaily_UM_globalcyclones_proj240_rad5cv0.25_open.nc")
+
+#extract_counts(1950,2016,type="low",thresh=0.15,move=500,closed=T,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15/",
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf="NCEP1_UM_globalcyclones_proj100_rad5cv0.15_500km.nc")
 
 #name="ACCESS1-3"
 #basedir="/short/eg3/asp561/cts.dir/gcyc_out/CMIP5/"

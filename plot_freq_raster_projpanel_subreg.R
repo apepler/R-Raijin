@@ -134,8 +134,9 @@ for(n in 1:length(pnames))
    if(lonlim[1]<0) {
    lon2=seq(-179.5,179.5,1)
    library(abind)
-   meanfreq2=abind(meanfreq[181:360,],meanfreq[1:180,],along=1)
-   image(lon2,lat,meanfreq2,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
+   meanfreq=abind(meanfreq[181:360,],meanfreq[1:180,],along=1)
+   meanfreq2=makesmooth(meanfreq)
+   image(lon2,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
           main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency: ",pnames[n]))
    map('world',add=T)
    contour(lon2,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
@@ -143,7 +144,7 @@ for(n in 1:length(pnames))
    image(lon,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
           main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency: ",pnames[n]))
    map('world2',add=T)   
-   contour(lon,lat,meanfreq,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   contour(lon,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
    }
    pnum=pnum+1
   }
@@ -158,6 +159,12 @@ dev.off()
 #        type="anticyclone",reanal="ERAI",pnames=c("2 fixes","500km movement"),
 #        proj=c("proj100_rad10cv0.075_D2","proj100_rad10cv0.075_500km"),latlim=c(20,60),lonlim=c(-30,50),
 #        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_threshcomp_medit.pdf")
+
+plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+        type="cyclone",reanal="ERAI",pnames=c("All","Closed Only"),
+        proj=c("proj100_rad5cv0.15_500km_open","proj100_rad5cv0.15_500km"),latlim=c(-90,90),lonlim=c(0,360),
+        fout="paperfig_cycfreq_ERAI_opencomp500km_global.pdf")
 
 plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",

@@ -17,8 +17,8 @@ years=seq(year1,year2,1)
 months=1:12
 members=paste("e",sprintf(0:10,fmt="%2.2d"),sep="")
 
-lat=seq(-69.5,0.5,1)
-lon=seq(80.5,189.5,1)
+lat=seq(-89.5,89.5,1)
+lon=seq(0.5,359.5,1)
 members=paste("e",sprintf(1:11,fmt="%2.2d"),sep="")
 
 cyclones<-array(0,c(length(lon),length(lat),length(years),length(months),numdays))
@@ -79,5 +79,4 @@ nc_close(ncout)
 } # End function
 
 
-ACCESS_ECLs_4month(1990,2012,inday=1,numdays=40,dir="/short/eg3/asp561/cts.dir/gcyc_out/access-s1/proj240_lows_rad5cv0.15/",thresh=0.25,outfile="ACCESS_bigaustcyclones_proj240_rad5cv0.25_40daylead.nc",closed=T)
-ACCESS_ECLs_4month(1990,2012,inday=1,numdays=40,dir="/short/eg3/asp561/cts.dir/gcyc_out/access-s1/proj240_lows_rad5cv0.15/",thresh=0.25,outfile="ACCESS_bigaustcyclones_proj240_rad5cv0.25c_40daylead.nc",closed=F)
+ACCESS_ECLs_4month(1990,2012,inday=1,numdays=40,dir="/short/eg3/asp561/cts.dir/gcyc_out/access-s1/proj240_lows_rad5cv0.15/",thresh=0.25,outfile="ACCESS_globalcyclones_proj240_rad5cv0.25_40daylead.nc",closed=T)
