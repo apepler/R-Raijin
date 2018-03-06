@@ -18,7 +18,7 @@
 
 ##You will need to set the location to where the track files are stored.
 
-get_austevents<-function(yearS,yearE,output,type="high",closed=T)
+get_austevents<-function(yearS,yearE,output,type="high",closed=T,lonlim=c(110,155),latlim=c(-45,-10))
 {
 
   ##Files with ECL track data for required years & preceding summers.  
@@ -86,7 +86,8 @@ get_austevents<-function(yearS,yearE,output,type="high",closed=T)
   ##Identify if within the aust region
   
   fixes[,14]<-0
-  I<-which(fixes[,6]>=110 & fixes[,6]<=155 & fixes[,7]<(-10) & fixes[,7]>=-45)
+  fixes[,6]=fixes[,6]%%360
+  I<-which(fixes[,6]>=lonlim[1] & fixes[,6]<=lonlim[2] & fixes[,7]<=latlim[2] & fixes[,7]>=latlim[1])
   fixes[I,14]<-1
     
   fixesDEC[,1]<-fixesDEC[,1]+floor(fixesDEC[,3]/10000)*1000000
@@ -221,7 +222,7 @@ get_austevents<-function(yearS,yearE,output,type="high",closed=T)
 #get_austevents(1950,2016,"UM_highs_NCEP1_proj100_rad10cv0.075",type="low")
 
 setwd('/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/')
-get_austevents(1980,2016,"UM_highs_ERAI_proj100_rad10cv0.075_all",type="high",closed=F)
+get_austevents(1980,2016,"UM_highs_ERAI_proj100_rad10cv0.075_bigaust",type="high",closed=F,lonlim=c(100,180),latlim=c(-60,-10))
 
 #setwd('/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/')
 #get_austevents(1990,2012,"UM_lows_ERAI_proj100_rad5cv0.15_all",type="low",closed=F)
