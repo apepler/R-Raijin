@@ -49,7 +49,7 @@ ColorBar <- function(brks,cols,vert=T,subsampleg=1)
   axis(4, at = seq(1.5, length(brks) - 1.5, subsampleg), tick = TRUE,
        labels = brks[seq(2, length(brks)-1, subsampleg)])
   } else {
-    par(mar = c(1.5, 3, 1, 3), mgp = c(1.5, 0.3, 0), las = 1, cex = 0.8)
+    par(mar = c(1.5, 1, 1, 1), mgp = c(1.5, 0.3, 0), las = 1, cex = 1)
     image(1:length(cols), 1, t(t(1:length(cols))), axes = FALSE, col = cols,
           xlab = '', ylab = '')
     box()
@@ -72,14 +72,14 @@ makesmooth<-function(data,winwid=5)
 }
 
 
-plot_freq_panel<-function(year1,year2,season=c(1,12),mthresh=c(0,100,200,300,400,600),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",reanal="ERAI",move=NA,
+plot_freq_panel<-function(year1,year2,mthresh=c(0,100,200,300,400,600),
+       seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",reanal="ERAI",
        latlim=c(-90,90),lonlim=c(0,360),breaks=c(0,0.05,seq(0.1,1,0.1),1000),
        closed=F,cv=NaN,fout="output")
 {
 
 years=seq(year1,year2,1)
-if(season[2]>=season[1]) mlist=seq(season[1],season[2]) else mlist=c(seq(season[1],12),seq(1,season[2]))
 
 if(reanal=="20CR") {
 varname="EnsMean"
@@ -92,10 +92,10 @@ fend=".nc"
 lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
-ss=length(mthresh)
-ss2=ceiling(ss/2)
+ss=length(snames)
+inum=length(mthresh)
 
-freq=array(0,c(length(lon),length(lat),length(years),ss))
+freq=array(0,c(length(lon),length(lat),length(years),ss,inum))
 for(y in 1:length(years))
 {
   print(years[y])
@@ -113,61 +113,60 @@ for(y in 1:length(years))
   I=which(fixes$Fix>1)
   if(I[1]==1) I=I[-1]
   for(i in 1:length(I)) fixes$Move[I[i]]=spDistsN1(cbind(fixes$Lon[I[i]],fixes$Lat[I[i]]),cbind(fixes$Lon[I[i]-1],fixes$Lat[I[i]-1]),longlat=T)
-  if(!is.na(move))
-  {
-    x<-rle(fixes$ID)
-    events<-data.frame(ID=x$values,Length=x$lengths,Date1=rep(0,length(x$values)),Move=rep(0,length(x$values)))
-    for(i in 1:length(events$ID))
-    {
-    I=which(fixes$ID==events[i,1])
-    events$Move[i]=spDistsN1(cbind(fixes$Lon[min(I)],fixes$Lat[min(I)]),
-                           cbind(fixes$Lon[max(I)],fixes$Lat[max(I)]),longlat=T)
-    }
-  events=events[events$Move>=move,]
-  include<-match(fixes[,1],events[,1])
-  J<-which(is.na(include)==0)
-  fixes=fixes[J,]
-  }
-
   fixes$Move=fixes$Move/6 # Speed per hour
 
   fixes=fixes[!is.na(fixes$Move),]
   if(!is.na(cv)) fixes=fixes[fixes$CV>=cv,]
   if(closed) fixes=fixes[(fixes$Open==0 | fixes$Open==10),] # Remove all open systems 
 
-  for(m in 1:(ss-1))
+  for(s in 1:ss)
   {
-  I=which(fixes$Move>=mthresh[m] & fixes$Move<mthresh[m+1] & fixes$Month%in%mlist)
-  if(length(I)>0) tmp=table(factor(fixes$Lon2[I],levels=0:359),factor(fixes$Lat2[I],levels=-90:89))
-  freq[,,y,m]=tmp
+   if(seasons[s,2]>=seasons[s,1]) mlist=seq(seasons[s,1],seasons[s,2]) else mlist=c(seq(seasons[s,1],12),seq(1,seasons[s,2]))
+   for(m in 1:(inum-1))
+   {
+     I=which(fixes$Move>=mthresh[m] & fixes$Move<mthresh[m+1] & fixes$Month%in%mlist)
+     if(length(I)>0) tmp=table(factor(fixes$Lon2[I],levels=0:359),factor(fixes$Lat2[I],levels=-90:89))
+     freq[,,y,s,m]=tmp
+   }
+   I=which(fixes$Move>=mthresh[inum] & fixes$Month%in%mlist)
+   if(length(I)>0) tmp=table(factor(fixes$Lon2[I],levels=0:359),factor(fixes$Lat2[I],levels=-90:89))
+   freq[,,y,s,inum]=tmp
   }
-  I=which(fixes$Move>=mthresh[ss] & fixes$Month%in%mlist)
-  if(length(I)>0) tmp=table(factor(fixes$Lon2[I],levels=0:359),factor(fixes$Lat2[I],levels=-90:89))
-  freq[,,y,ss]=tmp
-
 }
-   meanfreq=apply(freq,c(1,2,4),mean,na.rm=T)
+   meanfreq=apply(freq,c(1,2,4,5),mean,na.rm=T)
 
   if(lonlim[1]<0) {
    lon=seq(-179.5,179.5,1)
    library(abind)
-   meanfreq=abind(meanfreq[181:360,,],meanfreq[1:180,,],along=1)
+   meanfreq=abind(meanfreq[181:360,,,],meanfreq[1:180,,,],along=1)
   }
 
   col1=col_val(length(breaks)-1)
   pnum=1
 
-  pdf(file=paste0(fout,".pdf"),width=2*ss,height=6.3)
-  layout(rbind(seq(1,ss2),seq(ss2+1,ss),rep(ss+1,ss2)),height=c(1,1,0.3))
+  pdf(file=paste0(fout,".pdf"),width=4*ss,height=(2.7*inum)+0.8)
+  tmp=matrix(0,inum+1,ss)
+  n=1
+  for(s in 1:ss)
+  for(i in 1:inum)
+  {
+  tmp[i,s]=n
+  n=n+1
+  }
+  tmp[inum+1,]=n
+
+  layout(tmp,height=c(rep(1,inum),0.3))
+
   par(mar=c(2,2,4,1))
 
-   for(m in 1:ss)
+   for(s in 1:ss)
+    for(m in 1:inum)
    {
-   meanfreq2=makesmooth(meanfreq[,,m])
-   if(m==ss) tit=paste("Move >=",max(mthresh),"km/hr") else 
-      tit=paste0("Move ",mthresh[m],"-",mthresh[m+1]," km/hr") 
+   meanfreq2=makesmooth(meanfreq[,,s,m])
+   if(m==inum) tit=paste(snames[s],": Move >=",max(mthresh),"km/hr") else 
+      tit=paste0(snames[s],": Move ",mthresh[m],"-",mthresh[m+1]," km/hr") 
 
-   image(lon,lat,meanfreq[,,m],breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
+   image(lon,lat,meanfreq[,,s,m],breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
           main=paste0(letters[pnum],") ",tit))
    if(lonlim[1]<0) map('world',add=T) else map('world2',add=T)   
    contour(lon,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
@@ -177,25 +176,36 @@ for(y in 1:length(years))
 ColorBar(breaks,col1,subsampleg=1,vert=F)
 dev.off()
 
-  breaks=c(seq(0,40,5),100)
+  breaks=seq(0,100,10)
   col1=col_val(length(breaks)-1)
   pnum=1
 
-  pdf(file=paste0(fout,"_percent.pdf"),width=2*ss,height=6.3)
-  layout(rbind(seq(1,ss2),seq(ss2+1,ss),rep(ss+1,ss2)),height=c(1,1,0.3))
+  pdf(file=paste0(fout,"_percent.pdf"),width=4*ss,height=(2.7*inum)+0.8)
+  tmp=matrix(0,inum+1,ss)
+  n=1
+  for(s in 1:ss)
+  for(i in 1:inum)
+  {
+  tmp[i,s]=n
+  n=n+1
+  }
+  tmp[inum+1,]=n
+  layout(tmp,height=c(rep(1,inum),0.3))
+
   par(mar=c(2,2,4,1))
 
-   for(m in 1:ss)
+   for(s in 1:ss)
+   for(m in 1:inum)
    {
-   meanfreq2=100*makesmooth(meanfreq[,,m])/makesmooth(apply(meanfreq,c(1,2),sum))
+   meanfreq2=100*makesmooth(meanfreq[,,s,m])/makesmooth(apply(meanfreq[,,s,],c(1,2),sum))
    I=which(apply(meanfreq,c(1,2),sum)<0.2)
    meanfreq2[I]=NaN
 
-   if(m==ss) tit=paste("Move >=",max(mthresh),"km/hr") else
-      tit=paste0("Move ",mthresh[m],"-",mthresh[m+1]," km/hr")
+   if(m==inum) tit=paste(snames[s],": Move >=",max(mthresh),"km/hr") else
+      tit=paste0(snames[s],": Move ",mthresh[m],"-",mthresh[m+1]," km/hr")
 
    image(lon,lat,meanfreq2,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
-          main=paste0(letters[pnum],") ",tit),cex.main=1.5)
+          main=paste0(letters[pnum],") ",tit))
    if(lonlim[1]<0) map('world',add=T) else map('world2',add=T)
    contour(lon,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
 
@@ -211,16 +221,19 @@ dev.off()
 slist=c("","_MJJASO","_NDJFMA","_MAM","_JJA","_SON","_DJF")
 smons=rbind(c(1,12),c(5,10),c(11,4),c(3,5),c(6,8),c(9,11),c(12,2))
 
-for(s in 1)
-{
-if(s==1) breaks=c(0,0.05,seq(0.1,1,0.1),1000) else breaks=c(seq(0,0.5,0.05),1000)
+slist2=c("MAM","JJA","SON","DJF")
+smons2=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
+slist=c("MJJASO","NDJFMA")
+smons=rbind(c(5,10),c(11,4))
 
-plot_freq_panel(1980,2016,mthresh=seq(0,50,10),season=smons[s,],breaks=breaks,move=500,
+breaks=c(seq(0,0.5,0.05),1000)
+
+plot_freq_panel(1980,2016,mthresh=c(0,20,40),seasons=smons2,snames=slist2,breaks=breaks,
         dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",
-        reanal="ERAI",fout=paste0("paperfig_anticycfreq_ERAI_rad10cv0.075_500km_movement",slist[s]))
+        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_movement_4seasons")
 
-plot_freq_panel(1980,2016,mthresh=seq(0,50,10),season=smons[s,],breaks=breaks,
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",move=500,
-        reanal="ERAI",fout=paste0("paperfig_cycfreq_ERAI_rad5cv0.15_500km_movement",slist[s]))
-}
+plot_freq_panel(1980,2016,mthresh=c(0,20,40),seasons=smons2,snames=slist2,breaks=breaks,
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",
+        reanal="ERAI",fout="paperfig_cycfreq_ERAI_rad5cv0.15_movement_4seasons")
+
 

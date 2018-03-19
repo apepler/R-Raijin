@@ -113,8 +113,8 @@ return(ifile)
 }
 
 
-plot_indcorr_panel<-function(year1,year2,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),inames=c("SOI","SAM","AOI"),detrend=F,reanal="ERAI",
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",type2="_500km",
+plot_indcorr_panel<-function(year1,year2,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),iname="SOI",detrend=F,reanal="ERAI",
+       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",type2="_500km",latlim=c(-90,90),lonlim=c(0,360),
        type="cyclone",proj="proj100_rad5cv0.15",fout="output.pdf")
 {
 
@@ -133,25 +133,15 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(snames)
-inum=length(inames)
 
 breaks=c(-1,seq(-0.7,-0.3,0.1),0,seq(0.3,0.7,0.1),1)
 #breaks=c(1,seq(-0.7,0.7,0.1),1)
 col1=col_anom(length(breaks)-1)
 
-## Any number of seasons & indices
-tmp=matrix(0,inum+1,ss)
-n=1
-for(s in 1:ss)
-for(i in 1:inum)
-{
-tmp[i,s]=n
-n=n+1
-}
-tmp[inum+1,]=n
-
-pdf(file=fout,width=4*ss,height=(2.7*inum)+0.8)
-layout(tmp,height=c(rep(1,inum),0.3))
+ss=length(snames)
+pnum=1
+pdf(file=fout,width=2*ss+1,height=5.5)
+layout(rbind(c(seq(1,ss/2),ss+1),c(seq((ss/2)+1,ss),ss+1)),width=c(rep(1,ss/2),0.3))
 
 par(mar=c(2,2,4,1))
 n=0
@@ -176,11 +166,8 @@ n=0
    meanfreq=apply(freq,c(1,2),mean,na.rm=T)
    cyccorr<-array(NaN,c(length(lon),length(lat),2))
 
-   for(ii in 1:inum)
-   {
-
-    ifile=getInd(inames[ii])
-    if(is.na(ifile)) stop(paste("No file provided for",inames[ii]))
+    ifile=getInd(iname)
+    if(is.na(ifile)) stop(paste("No file provided for",iname))
     index=read.csv(ifile)
     if(min(index$Year)>year1 | max(index$Year)<year2) stop("Index has shorter length of record than selected years")
     K=which(index$Year%in%years2[I])
@@ -194,7 +181,7 @@ n=0
 
    cyccorr<-array(NaN,c(length(lon),length(lat),2))
    n=n+1
-   tit=paste0(letters[n],") ",snames[s]," correlation with ",inames[ii])
+   tit=paste0(letters[n],") ",snames[s]," correlation with ",iname)
 
    for(i in 1:length(lon))
     for(j in 1:length(lat))
@@ -206,18 +193,23 @@ n=0
       if(a$p.value<0.05) cyccorr[i,j,1]=a$estimate # Only plot where individually significant
       }
 
-   image(lon,lat,cyccorr[,,1],breaks=breaks,col=col1,xlab="",ylab="",
-          main=tit)
+   if(lonlim[1]<0) {
+   lon2=seq(-179.5,179.5,1)
+   cyccorr=abind(cyccorr[181:360,,],cyccorr[1:180,,],along=1)
+   } else lon2=lon 
+
+   image(lon2,lat,cyccorr[,,1],breaks=breaks,col=col1,xlab="",ylab="",
+          xlim=lonlim,ylim=latlim,main=tit)
    map('world2',add=T)   
    pval=array(p.adjust(cyccorr[,,2],"fdr"),dim(cyccorr[,,2]))
 #   pval=fieldsig(cyccorr[,,2],alpha=0.05)
-   contour(lon,lat,pval<0.05,levels=c(-100,0.05,100),add=T,lwd=1.5,col="black",drawlabels=F)
+   contour(lon2,lat,pval<0.05,levels=c(-100,0.05,100),add=T,lwd=1.5,col="black",drawlabels=F)
 #   contour(lon,lat,(pval<0.05 & cyccorr[,,1]<0),levels=c(-100,0.05,100),add=T,lwd=1.5,lty=2,drawlabels=F)
-  }
+  
 
 }
 
-ColorBar(breaks,col1,subsampleg=1,vert=F)
+ColorBar(breaks,col1,subsampleg=1,vert=T)
 dev.off()
 }
 
@@ -226,44 +218,12 @@ smons2=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
 slist=c("MJJASO","NDJFMA")
 smons=rbind(c(5,10),c(11,4))
 
-#plot_indcorr_panel(1982,2016,seasons=smons,
-#       snames=slist,inames=c("SOI","NINO3.4","DMI"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#       fout=paste0("paperfig_cyccorr_Trop2_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig2.pdf"))
-
-#plot_indcorr_panel(1980,2016,seasons=smons,
-#       snames=slist,inames=c("AOI","Hadley.NH","Hadley.SH","SAM"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-#       fout=paste0("paperfig_anticyccorr_Extratrop2_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig2.pdf"))
-
-#plot_indcorr_panel(1982,2016,seasons=smons,
-#       snames=slist,inames=c("SOI","NINO3.4","DMI"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-#       fout=paste0("paperfig_anticyccorr_Trop2_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig2.pdf"))
-
-#plot_indcorr_panel(1910,2014,seasons=smons,
-#       snames=slist,inames=c("SOI","STRI","STRP"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="20CR",
-#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#       fout=paste0("paperfig_cyccorr_20CRpanel1910_proj100_rad5cv0.15_500km_fieldsig2.pdf"))
-
-#plot_indcorr_panel(1910,2014,seasons=smons,
-#       snames=slist,inames=c("SOI","STRI","STRP"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="20CR",
-#       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-#       fout=paste0("paperfig_anticyccorr_20CRpanel1910_proj100_rad10cv0.075_500km_fieldsig2.pdf"))
+for(index in c("STRI","STRP"))
+{
 
 plot_indcorr_panel(1980,2016,seasons=smons,
-       snames=slist,inames=c("AOI","Hadley.NH","SOI","Hadley.SH","SAM"),
+       snames=slist,iname=index,
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_All_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig2.pdf"))
-
-#plot_indcorr_panel(1980,2016,seasons=smons,
-#       snames=slist,inames=c("AOI","Hadley.NH","SOI","Hadley.SH","SAM"),
-#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
-#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-#       fout=paste0("paperfig_cyccorr_All_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig2.pdf"))
+       type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",latlim=c(-50,-10),lonlim=c(100,180),
+       fout=paste0("paperfig_anticyccorr_",index,"_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig2.pdf"))
+}
