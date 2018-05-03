@@ -21,21 +21,29 @@ lon=ncvar_get(a,"lon")
 cycrain=ncvar_get(a,"PRCP")
 cycslp=ncvar_get(a,"SLP")
 
-for(s in 1:7)
+for(s in 5:6)
 for(r in 1:length(regnames)) 
 {
-S=which(fixes$Month%in%mlist[[s]] & fixes[,regnames[r]]==1)
-avrain=apply(cycrain[,,S],c(1,2),mean)
-avslp=apply(cycslp[,,S],c(1,2),mean)
-
 ## Make some plots
 
-pdf(file=paste0("UM_highs_ERAI_proj100_rad10cv0.075_",regnames[r],"rain_500km_",snames[s],".pdf"),height=4,width=5)
-par(mar=c(2,2,1,1))
-layout(cbind(1,2),width=c(1,0.25))
+pdf(file=paste0("UM_highs_ERAI_proj100_rad10cv0.075_",regnames[r],"rain_500km_",snames[s],"_vtime.pdf"),height=4,width=9)
+par(mar=c(2,2,3,1))
+layout(cbind(1,2,3),width=c(1,1,0.25))
+
+S=which(fixes$Month%in%mlist[[s]] & fixes[,regnames[r]]==1 & fixes$Year<1997)
+avrain=apply(cycrain[,,S],c(1,2),mean)
+avslp=apply(cycslp[,,S],c(1,2),mean)
 image(lon,lat,avrain[,length(lat):1],breaks=breaks,col=cols, # Have to reverse because ERAI is upside down
-      xlab="",ylab="",main="")
+      xlab="",ylab="",main="1980-1996")
 contour(lon,lat,avslp[,length(lat):1],levels=seq(980,1040,4),lwd=2,col="black",add=T)
+
+S=which(fixes$Month%in%mlist[[s]] & fixes[,regnames[r]]==1 & fixes$Year>=1997)
+avrain=apply(cycrain[,,S],c(1,2),mean)
+avslp=apply(cycslp[,,S],c(1,2),mean)
+image(lon,lat,avrain[,length(lat):1],breaks=breaks,col=cols, # Have to reverse because ERAI is upside down
+      xlab="",ylab="",main="1997-2016")
+contour(lon,lat,avslp[,length(lat):1],levels=seq(980,1040,4),lwd=2,col="black",add=T)
+
 ColorBar(breaks,cols,subsampleg=1,vert=T)
 dev.off()
 

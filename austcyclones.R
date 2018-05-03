@@ -221,8 +221,11 @@ get_austevents<-function(yearS,yearE,output,type="high",closed=T,lonlim=c(110,15
 #setwd('/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_highs_rad10cv0.075_v2/')
 #get_austevents(1950,2016,"UM_highs_NCEP1_proj100_rad10cv0.075",type="low")
 
-setwd('/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/')
-get_austevents(1980,2016,"UM_highs_ERAI_proj100_rad10cv0.075_bigaust",type="high",closed=F,lonlim=c(100,180),latlim=c(-60,-10))
+setwd('/short/eg3/asp561/cts.dir/gcyc_out/BARRA/proj240_lows_rad2cv1/')
+get_austevents(2011,2015,"UM_lows_BARRA_proj240_rad2cv1_bigaust",type="low",closed=F,lonlim=c(100,180),latlim=c(-60,-10))
+
+#setwd('/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj240_lows_rad2cv1/')
+#get_austevents(1979,2017,"UM_lows_ERAI_proj240_rad2cv1_bigaust",type="low",closed=F,lonlim=c(100,180),latlim=c(-60,-10))
 
 #setwd('/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/')
 #get_austevents(1990,2012,"UM_lows_ERAI_proj100_rad5cv0.15_all",type="low",closed=F)
