@@ -30,7 +30,7 @@ if(length(unique(fixes$Year))>1) fixes=fixes[fixes$Year==unique(fixes$Year)[2],]
 fixes$Month=floor(fixes$Date/100)%%100
 fixes$Lat2=floor(fixes$Lat)
 fixes$Lon2=floor(fixes$Lon)%%360
-if(type=="high") fixes$CV=-fixes$CV
+fixes$CV=abs(fixes$CV)
 
 ### Make table of events to combine with DJF for exclusion
  if(!is.na(move))
@@ -105,25 +105,27 @@ nc_close(ncout)
 
 } # End function
 
-#extract_counts(1980,2016,type="high",thresh=0.075,dur=2,
-#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
+#extract_counts(1980,2016,type="high",move=500,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075_notopo/",
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-#     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.075_D2.nc")
-#
+#     outf="ERAI_UM_globalanticyclones_proj100_rad10cv0.75_notopo_500km.nc")
+
+for(lev in c(500,700,850,925))
+{
+extract_counts(1980,2016,type="low",thresh=1,move=500,
+     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj100_lows_rad5cv1/"),
+     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+     outf=paste0("ERAI_UM_globalcyclones_",lev,"hPa_proj100_rad5cv1_500km.nc"))
+}
 #extract_counts(1980,2016,type="high",thresh=0.15,dur=2,
 #     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
 #     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.15_D2.nc")
 
-extract_counts(1990,2013,type="low",thresh=0.25,closed=T,
-     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/daily_proj240_lows_rad5cv0.15/",
-     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf="ERAIdaily_UM_globalcyclones_proj240_rad5cv0.25.nc")
-
-extract_counts(1990,2013,type="low",thresh=0.25,closed=F,
-     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/daily_proj240_lows_rad5cv0.15/",
-     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf="ERAIdaily_UM_globalcyclones_proj240_rad5cv0.25_open.nc")
+#extract_counts(1990,2013,type="low",thresh=0.25,closed=T,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/daily_proj240_lows_rad5cv0.15/",
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf="ERAIdaily_UM_globalcyclones_proj240_rad5cv0.25.nc")
 
 #extract_counts(1950,2016,type="low",thresh=0.15,move=500,closed=T,
 #     dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15/",

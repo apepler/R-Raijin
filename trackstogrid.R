@@ -172,5 +172,6 @@ nc_close(ncout)
 
 #for(year in 1979:2016) makegrid(year,dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/850hPa_z/proj100_lows_rad5cv1/",outf=paste0("austlows_6deg_850hPa_proj100_rad5cv1_D2_",year,"_vic.nc"),type="low",dur=2,closed=T,lat=seq(-50,-20,0.25),lon=seq(120,160,0.25),latlim=c(-40,-32.5),lonlim=c(140,151),winwid=6,widtype="deg",wincirc=T)
 
-for(year in 1979:2016) makegrid(year,dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15_notopo/",outf=paste0("austlows_6deg_proj100_rad5cv0.15_notopo_open_",year,"_vic.nc"),type="low",closed=F,lat=seq(-50,-20,0.25),lon=seq(120,160,0.25),latlim=c(-40,-32.5),lonlim=c(140,151),winwid=6,widtype="deg",wincirc=T)
+for(year in 1979:2016) makegrid(year,dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",outf=paste0("austlows_8deg_proj100_rad5cv0.15_",year,".nc"),type="low",closed=T,lat=seq(-70,0,0.5),lon=seq(90,180,0.5),latlim=c(-50,-4),lonlim=c(110,161),winwid=8,widtype="deg",wincirc=T)
 
+for(year in 1979:2016) makegrid(year,dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",outf=paste0("austhighs_10deg_proj100_rad10cv0.075_",year,".nc"),type="high",closed=T,lat=seq(-70,0,0.5),lon=seq(90,180,0.5),latlim=c(-50,-4),lonlim=c(110,161),winwid=10,widtype="deg",wincirc=T)

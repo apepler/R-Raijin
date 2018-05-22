@@ -141,11 +141,17 @@ par(mar=c(2,2,4,1))
 
    if(boxes) 
    {
-    polygon(x=c(110,155,155,110,110),y=c(-25,-25,-40,-40,-25),border="black",lwd=3)
-    polygon(x=c(135,147.5,147.5,135,135),y=c(-32.5,-32.5,-42.5,-42.5,-32.5),border="red",lwd=3)
-    polygon(x=c(160,147.5,147.5,160,160),y=c(-25,-25,-40,-40,-25),border="orange",lwd=3)
-    polygon(x=c(110,122.5,122.5,110,110),y=c(-40,-40,-27.5,-27.5,-40),border="purple",lwd=3)
-    if(s==1) legend("topleft",legend=c("S.Aust","SEA","Tasman","SWWA"),col=c("black","red","orange","purple"),lwd=3,ncol=2,bg="white")
+#    polygon(x=c(110,155,155,110,110),y=c(-25,-25,-40,-40,-25),border="black",lwd=3)
+#    polygon(x=c(135,147.5,147.5,135,135),y=c(-32.5,-32.5,-42.5,-42.5,-32.5),border="red",lwd=3)
+#    polygon(x=c(160,147.5,147.5,160,160),y=c(-25,-25,-40,-40,-25),border="orange",lwd=3)
+#    polygon(x=c(110,122.5,122.5,110,110),y=c(-40,-40,-27.5,-27.5,-40),border="purple",lwd=3)
+#    if(s==1) legend("topleft",legend=c("S.Aust","SEA","Tasman","SWWA"),col=c("black","red","orange","purple"),lwd=3,ncol=2,bg="white")
+
+    polygon(x=c(90,110,110,90,90),y=c(-42.5,-42.5,-27.5,-27.5,-42.5),border="red",lwd=3)
+    polygon(x=c(120,145,145,120,120),y=c(-42.5,-42.5,-27.5,-27.5,-42.5),border="orange",lwd=3)
+    polygon(x=c(150,170,170,150,150),y=c(-42.5,-42.5,-27.5,-27.5,-42.5),border="purple",lwd=3)
+    if(s==1) legend("topleft",legend=c("SEIO","GAB","Tasman"),col=c("red","orange","purple"),lwd=3,bg="white")
+
    }
 
    }
@@ -163,15 +169,23 @@ dev.off()
 #        proj=c("proj100_rad10cv0.075_D2","proj100_rad10cv0.075_500km"),latlim=c(20,60),lonlim=c(-30,50),
 #        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_threshcomp_medit.pdf")
 
-plot_freq_panel(1980,2016,seasons=cbind(c(12,3,6,9),c(2,5,8,11)),snames=c("DJF","MAM","JJA","SON"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="anticyclone",reanal="ERAI",proj="proj100_rad5cv0.075_500km",boxes=T,
-        latlim=c(-50,-10),lonlim=c(90,180),breaks=c(0,0.05,seq(0.1,1,0.1),1000),
-        fout="paperfig_anticycfreq_ERAI_rad5cv0.075_4season_500km_australia_box.pdf")
+#plot_freq_panel(1980,2016,seasons=cbind(c(12,3,6,9),c(2,5,8,11)),snames=c("DJF","MAM","JJA","SON"),
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#        type="anticyclone",reanal="ERAI",proj="proj100_rad10cv0.075_500km",
+#        latlim=c(-50,-10),lonlim=c(90,180),breaks=c(0,0.05,seq(0.1,1,0.1),1000),
+#        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_4season_500km_australia.pdf")
 
+#for(lev in c(500,700,850,925))
+#{
+#plot_freq_panel(1980,2016,seasons=cbind(c(5,11),c(10,4)),snames=c("May-October","November-April"),
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#        type="cyclone",reanal="ERAI",proj=paste0(lev,"hPa_proj100_rad5cv1_500km"),
+#        latlim=c(-50,-10),lonlim=c(90,180),breaks=c(0,0.05,seq(0.1,1,0.1),1000),
+#        fout=paste0("paperfig_cycfreq",lev,"hPa_ERAI_rad5cv1_2season_500km_australia.pdf"))
+#}
 plot_freq_panel(1980,2016,seasons=cbind(c(5,11),c(10,4)),snames=c("May-October","November-April"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="anticyclone",reanal="ERAI",proj="proj100_rad5cv0.075_500km",boxes=T,
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",boxes=T,
+        type="anticyclone",reanal="ERAI",proj="proj100_rad10cv0.075_500km",
         latlim=c(-50,-10),lonlim=c(90,180),breaks=c(0,0.05,seq(0.2,2,0.2),1000),
-        fout="paperfig_anticycfreq_ERAI_rad5cv0.075_2season_500km_australia_box.pdf")
+        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_2season_500km_australia_boxes2.pdf")
 
