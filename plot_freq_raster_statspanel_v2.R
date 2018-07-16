@@ -83,11 +83,14 @@ vars=c(expression("a) Mean Laplacian (hPa (deg.lat)"^-2 * ")"),"b) Mean Central 
 vnames=c("CV","MSLP","Radius","Move")
 
 if(type=="high" | type=="anticyclone") {
-vbreaks=list(c(seq(0.1,0.4,0.05),100),
-             c(seq(1010,1040,5),9999),
-             c(seq(3,10,1),1000),
-             c(seq(0,60,10),1000))
-
+#vbreaks=list(c(0,seq(0.1,0.4,0.05),100),
+#             c(0,seq(1020,1028,2),9999),
+#             c(0,seq(5,10,1),1000),
+#             c(0,seq(20,60,10),1000))
+vbreaks=list(c(0,seq(0.1,0.3,0.05),100),
+             c(0,seq(1020,1036,4),9999),
+             c(0,seq(4,10,1),1000),
+             c(0,seq(20,50,10),1000))
 } else {
 vbreaks=list(c(seq(0.2,0.9,0.1),100),
              c(seq(1020,970,-10),0),
@@ -99,8 +102,8 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 if(season[2]>=season[1]) mlist=seq(season[1],season[2]) else mlist=c(seq(season[1],12),seq(1,season[2]))
 
-ss=length(snames)
-if(ss<=2) vbreaks[[1]]=c(0,0.05,0.25,0.5,0.75,1,1.5,2,100)
+#ss=length(mlist)
+#if(ss<=2) vbreaks[[1]]=c(0,0.05,0.25,0.5,0.75,1,1.5,2,100)
 vv=length(vars)
 
 varfreq=array(NaN,c(length(lon),length(lat),length(years),vv,2))
@@ -186,7 +189,9 @@ for(y in 1:length(years))
    for(v in 1:vv)
    {
    breaks=vbreaks[[v]]
-   col1=col_val(length(breaks))
+   #col1=col_val(length(breaks))
+   library(RColorBrewer)
+   col1=colorRampPalette(brewer.pal(9,"Blues"))(length(breaks))
    col1=col1[-1]
 
    meanvar=apply(varfreq[,,,v,2]*varfreq[,,,v,1],c(1,2),sum,na.rm=T)/apply(varfreq[,,,v,1],c(1,2),sum,na.rm=T)
@@ -210,7 +215,7 @@ for(v in 1:vv)
 breaks=vbreaks[[v]]
 col1=col_val(length(breaks))
 col1=col1[-1]
-ColorBar(breaks,col1,subsampleg=1,vert=T,nstart=1)
+ColorBar(breaks,col1,subsampleg=1,vert=T,nstart=2)
 }
 dev.off()
 
@@ -223,8 +228,8 @@ slist=c("MJJASO","NDJFMA")
 smons=rbind(c(5,10),c(11,4))
 
 plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",latlim=c(-50,-10),lonlim=c(100,180),
-        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500kmstats_aust")
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",#latlim=c(-50,-10),lonlim=c(100,180),
+        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500stats_global2")
 
 #plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,type="cyclone",
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",

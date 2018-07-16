@@ -2,8 +2,8 @@ years=seq(1851,2016)
 library(ncdf4)
 library(sp)
 
-stypes=c("Events","Events.1020","Event.Length","Event.Move","Fixes","Fix.MSLP","Fix.CV","Fix.Radius","Fix.Depth","Fix.Move","Fix.LonMove","Fix.Latitude")
-regnames=c("Aust","BigTas","GAB","SEIO")
+stypes=c("Events","Events.1020","Event.Length","Event.Move","Fixes","Fix.MSLP","Fix.CV","Fix.Radius","Fix.Depth","Fix.Move","Fix.LonMove","Fix.Latitude","Fixes.UniqueHours","Fixes.1020")
+regnames=c("Aust","SEIO","SAust","BigTas")
 
 stats=array(NaN,c(length(years),12,length(stypes),length(regnames),59))
 dimnames(stats)[[1]]=years
@@ -15,7 +15,7 @@ dimnames(stats)[[5]]<-names<-c(1:56,"EnsMean","NCEP1","ERAI")
 dir="/short/eg3/asp561/cts.dir/gcyc_out/"
 type="proj100_highs_rad10cv0.075/"
 
-outfile="UM_20CR_anticyclonestats_austregions3_proj100_rad10cv0.075_500km.RData"
+outfile="UM_20CR_anticyclonestats_austregions4_proj100_rad10cv0.075_500km.RData"
 
 for(y in 1:length(years))
 {
@@ -48,12 +48,12 @@ for(y in 1:length(years))
     fixes$LonMove[abs(fixes$LonMove>50)]=NaN    
     numcols=dim(fixes)[2]
 
-    fixes$BigTas<-fixes$GAB<-fixes$SEIO<-fixes$Aust<-0
+    fixes$BigTas<-fixes$SAust<-fixes$SEIO<-fixes$Aust<-0
     I<-which(fixes$Lon>=110 & fixes$Lon<=155 & fixes$Lat<(-10) & fixes$Lat>=-45)
     fixes$Aust[I]<-1
-    I<-which(fixes$Lon>=120 & fixes$Lon<=145 & fixes$Lat<=(-27.5) & fixes$Lat>=-42.5)
-    fixes$GAB[I]<-1
-    I<-which(fixes$Lon>=90 & fixes$Lon<=110 & fixes$Lat<=(-27.5) & fixes$Lat>=-42.5)
+    I<-which(fixes$Lon>=115 & fixes$Lon<=150 & fixes$Lat<=(-27.5) & fixes$Lat>=-42.5)
+    fixes$SAust[I]<-1
+    I<-which(fixes$Lon>=90 & fixes$Lon<=115 & fixes$Lat<=(-27.5) & fixes$Lat>=-42.5)
     fixes$SEIO[I]<-1
     I<-which(fixes$Lon>=150 & fixes$Lon<=170 & fixes$Lat<(-27.5) & fixes$Lat>=-42.5)
     fixes$BigTas[I]<-1
@@ -61,7 +61,7 @@ for(y in 1:length(years))
     x<-rle(fixes$ID)
     events<-data.frame(ID=x$values,Length=x$lengths,Date1=rep(0,length(x$values)),Move=rep(0,length(x$values)),Closed=rep(0,length(x$values)))
     enumcols=dim(events)[2]
-    events$BigTas<-events$SEIO<-events$GAB<-events$Aust<-0
+    events$BigTas<-events$SEIO<-events$SAust<-events$Aust<-0
 
     for(i in 1:length(events$ID)) 
     {
@@ -82,7 +82,8 @@ for(y in 1:length(years))
     include<-match(fixes[,1],events[,1])
     J<-which(is.na(include)==0)
     fixes=fixes[J,]
-    
+    fixes$Date2=as.POSIXct(paste(fixes$Date,fixes$Time),format="%Y%m%d %H:%M",tz="UTC")    
+
     for(m in 1:12)
      for(tt in 1:length(regnames))
     {
@@ -107,6 +108,9 @@ for(y in 1:length(years))
         stats[y,m,10,tt,n]=mean(fixes$Move[J],na.rm=T)
         stats[y,m,11,tt,n]=mean(fixes$LonMove[J],na.rm=T)
         stats[y,m,12,tt,n]=mean(fixes$Lat[J],na.rm=T)
+        stats[y,m,13,tt,n]=length(unique(fixes$Date2[J]))
+        stats[y,m,14,tt,n]=length(which(fixes$MSLP[J]>=1020))
+
       }
       
     }
@@ -142,12 +146,12 @@ for(n in 58:59)
 
     numcols=dim(fixes)[2]
 
-    fixes$BigTas<-fixes$GAB<-fixes$SEIO<-fixes$Aust<-0
+    fixes$BigTas<-fixes$SAust<-fixes$SEIO<-fixes$Aust<-0
     I<-which(fixes$Lon>=110 & fixes$Lon<=155 & fixes$Lat<(-10) & fixes$Lat>=-45)
     fixes$Aust[I]<-1
-    I<-which(fixes$Lon>=120 & fixes$Lon<=145 & fixes$Lat<=(-27.5) & fixes$Lat>=-42.5)
-    fixes$GAB[I]<-1
-    I<-which(fixes$Lon>=90 & fixes$Lon<=110 & fixes$Lat<=(-27.5) & fixes$Lat>=-42.5)
+    I<-which(fixes$Lon>=115 & fixes$Lon<=150 & fixes$Lat<=(-27.5) & fixes$Lat>=-42.5)
+    fixes$SAust[I]<-1
+    I<-which(fixes$Lon>=90 & fixes$Lon<=115 & fixes$Lat<=(-27.5) & fixes$Lat>=-42.5)
     fixes$SEIO[I]<-1
     I<-which(fixes$Lon>=150 & fixes$Lon<=170 & fixes$Lat<(-27.5) & fixes$Lat>=-42.5)
     fixes$BigTas[I]<-1
@@ -155,7 +159,7 @@ for(n in 58:59)
     x<-rle(fixes$ID)
     events<-data.frame(ID=x$values,Length=x$lengths,Date1=rep(0,length(x$values)),Move=rep(0,length(x$values)),Closed=rep(0,length(x$values)))
     enumcols=dim(events)[2]
-    events$BigTas<-events$GAB<-events$SEIO<-events$Aust<-0
+    events$BigTas<-events$SAust<-events$SEIO<-events$Aust<-0
 
     for(i in 1:length(events$ID))
     {
@@ -176,6 +180,7 @@ for(n in 58:59)
     include<-match(fixes[,1],events[,1])
     J<-which(is.na(include)==0)
     fixes=fixes[J,]
+    fixes$Date2=as.POSIXct(paste(fixes$Date,fixes$Time),format="%Y%m%d %H:%M",tz="UTC")
   
   for(m in 1:12)
      for(tt in 1:length(regnames))
@@ -200,6 +205,8 @@ for(n in 58:59)
         stats[y,m,10,tt,n]=mean(fixes$Move[J],na.rm=T)
         stats[y,m,11,tt,n]=mean(fixes$LonMove[J],na.rm=T)
         stats[y,m,12,tt,n]=mean(fixes$Lat[J],na.rm=T)
+        stats[y,m,13,tt,n]=length(unique(fixes$Date2[J]))
+        stats[y,m,14,tt,n]=length(which(fixes$MSLP[J]>=1020)) 
       }
 
     }

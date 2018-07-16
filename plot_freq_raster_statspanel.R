@@ -38,6 +38,7 @@ color.palette <- function(steps, n.steps.between=NULL, ...){
 
 col_anom <- color.palette(c("darkblue","blue","white","red","darkred"),c(10,20,20,10))
 col_val <- color.palette(c("white","blue","darkblue","black"),c(20,10,5))
+col_val2 <- color.palette(c("white","cyan","blue","darkblue"), c(10,20,5))
 
 ColorBar <- function(brks,cols,vert=T,subsampleg=1,nstart=2)
 {
@@ -83,10 +84,18 @@ vars=c(expression("a) Mean Laplacian (hPa (deg.lat)"^-2 * ")"),"b) Mean Central 
 vnames=c("CV","MSLP","Radius","Move")
 
 if(type=="high" | type=="anticyclone") {
-vbreaks=list(c(seq(0.1,0.4,0.05),100),
-             c(seq(1010,1040,5),9999),
-             c(seq(3,10,1),1000),
-             c(seq(0,50,10),1000))
+#vbreaks=list(c(seq(0.1,0.4,0.05),100),
+#             c(seq(1010,1040,5),9999),
+#             c(seq(3,10,1),1000),
+#             c(seq(0,50,10),1000))
+#vbreaks=list(c(0,seq(0.1,0.3,0.05),100),
+#             c(0,seq(1020,1032,4),9999),
+#             c(0,seq(4,9,1),1000),
+#             c(0,seq(20,50,10),1000))
+vbreaks=list(c(0,seq(0.1,0.3,0.025),100),
+             c(0,seq(1020,1032,2),9999),
+             c(0,seq(4,10,0.5),1000),
+             c(0,seq(20,50,5),1000))
 } else {
 vbreaks=list(c(seq(0.2,0.9,0.1),100),
              c(seq(1020,970,-10),0),
@@ -98,8 +107,8 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 if(season[2]>=season[1]) mlist=seq(season[1],season[2]) else mlist=c(seq(season[1],12),seq(1,season[2]))
 
-ss=length(snames)
-if(ss<=2) vbreaks[[1]]=c(0,0.05,0.25,0.5,0.75,1,1.5,2,100)
+#ss=length(snames)
+#if(ss<=2) vbreaks[[1]]=c(0,0.05,0.25,0.5,0.75,1,1.5,2,100)
 vv=length(vars)
 
 varfreq=array(NaN,c(length(lon),length(lat),length(years),vv,2))
@@ -183,8 +192,12 @@ for(y in 1:length(years))
    for(v in 1:vv)
    {
    breaks=vbreaks[[v]]
-   col1=col_val(length(breaks))
-   col1=col1[-1]
+#   col1=col_val2(length(breaks))
+#   col1=col1[-1]
+#   library(RColorBrewer)
+#   col1=brewer.pal(length(breaks)-1,"PuBu")
+   library(viridisLite)
+   col1=viridis(length(breaks)-1,option="inferno")
 
    meanvar=apply(varfreq[,,,v,2]*varfreq[,,,v,1],c(1,2),sum,na.rm=T)/apply(varfreq[,,,v,1],c(1,2),sum,na.rm=T)
    meanvar[apply(varfreq[,,,v,1],c(1,2),mean,na.rm=T)<0.05]=NaN
@@ -197,7 +210,7 @@ for(y in 1:length(years))
    if(breaks[2]>breaks[1]) image(lon,lat,meanvar,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,main=vars[v],cex.main=1.5,cex.axis=1) else
      image(lon,lat,meanvar,breaks=rev(breaks),col=rev(col1),xlab="",ylab="",xlim=lonlim,ylim=latlim,main=vars[v],cex.main=1.5,cex.axis=1)
    if(lonlim[1]<0) map('world',add=T) else map('world2',add=T)   
-   contour(lon,lat,meanvar2,levels=breaks,add=T,lwd=2,col="black")
+   contour(lon,lat,meanvar2,levels=breaks[seq(2,length(breaks),2)],add=T,lwd=2,col="black")
    pnum=pnum+1
    }
 
@@ -205,9 +218,11 @@ for(y in 1:length(years))
 for(v in 1:vv)
 {
 breaks=vbreaks[[v]]
-col1=col_val(length(breaks))
-col1=col1[-1]
-ColorBar(breaks,col1,subsampleg=1,vert=F,nstart=1)
+#col1=col_val2(length(breaks))
+#col1=col1[-1]
+#col1=brewer.pal(length(breaks)-1,"PuBu")
+col1=viridis(length(breaks)-1,option="inferno")
+ColorBar(breaks,col1,subsampleg=2,vert=F,nstart=2)
 }
 dev.off()
 
@@ -219,11 +234,11 @@ smons2=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
 slist=c("MJJASO","NDJFMA")
 smons=rbind(c(5,10),c(11,4))
 
-#plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,
-#        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",
-#        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500kmstats")
+plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",
+        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500kmstats_inferno2")
 
-plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,type="cyclone",
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",
-        reanal="ERAI",fout="paperfig_cycfreq_ERAI_rad5cv0.15_500kmstats")
+#plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,type="cyclone",
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",
+#        reanal="ERAI",fout="paperfig_cycfreq_ERAI_rad5cv0.15_500kmstats")
 

@@ -110,23 +110,31 @@ nc_close(ncout)
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
 #     outf="ERAI_UM_globalanticyclones_proj100_rad10cv0.75_notopo_500km.nc")
 
-for(lev in c(500,700,850,925))
+for(lev in 500)
 {
-extract_counts(1980,2016,type="low",thresh=1,move=500,
+extract_counts(1980,2016,type="low",thresh=4,dur=2,
      dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj100_lows_rad5cv1/"),
      outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf=paste0("ERAI_UM_globalcyclones_",lev,"hPa_proj100_rad5cv1_500km.nc"))
+     outf=paste0("ERAI_UM_globalcyclones_",lev,"hPa_proj100_rad5cv4_D2.nc"))
 }
-#extract_counts(1980,2016,type="high",thresh=0.15,dur=2,
-#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
-#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-#     outf="ERAI_UM_globalanticyclones_proj100_rad5cv0.15_D2.nc")
+extract_counts(1980,2016,type="low",thresh=1,dur=2,
+     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad2cv1/"),
+     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+     outf=paste0("ERAI_UM_globalcyclones_proj100_rad2cv1_D2.nc"))
 
-#extract_counts(1990,2013,type="low",thresh=0.25,closed=T,
-#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/daily_proj240_lows_rad5cv0.15/",
-#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-#     outf="ERAIdaily_UM_globalcyclones_proj240_rad5cv0.25.nc")
 
+#extract_counts(1980,2016,type="high",thresh=0.075,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf="ERAI_UM_globalanticyclones_proj100_rad10cv0.075.nc")
+
+#for(cv in c(0.25,0.5))
+#{
+#extract_counts(1980,2016,type="low",thresh=cv,closed=T,move=500,
+#     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf=paste0("ERAI_UM_globalcyclones_proj100_rad5cv",cv,"_500km.nc"))
+#}
 #extract_counts(1950,2016,type="low",thresh=0.15,move=500,closed=T,
 #     dir="/short/eg3/asp561/cts.dir/gcyc_out/NCEP1/proj100_lows_rad5cv0.15/",
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
