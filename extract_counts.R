@@ -110,17 +110,17 @@ nc_close(ncout)
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
 #     outf="ERAI_UM_globalanticyclones_proj100_rad10cv0.75_notopo_500km.nc")
 
-for(lev in 500)
+for(lev in c(500,925,850,700))
 {
-extract_counts(1980,2016,type="low",thresh=4,dur=2,
-     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj100_lows_rad5cv1/"),
+extract_counts(1980,2016,type="low",thresh=5,move=500,
+     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj240_lows_rad5cv5/"),
      outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf=paste0("ERAI_UM_globalcyclones_",lev,"hPa_proj100_rad5cv4_D2.nc"))
+     outf=paste0("ERAI_UM_globalcyclones_",lev,"hPa_proj240_rad5cv5_500km.nc"))
 }
-extract_counts(1980,2016,type="low",thresh=1,dur=2,
-     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad2cv1/"),
-     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf=paste0("ERAI_UM_globalcyclones_proj100_rad2cv1_D2.nc"))
+#extract_counts(1980,2016,type="low",thresh=1,dur=2,
+#     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad2cv1/"),
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf=paste0("ERAI_UM_globalcyclones_proj100_rad2cv1_D2.nc"))
 
 
 #extract_counts(1980,2016,type="high",thresh=0.075,

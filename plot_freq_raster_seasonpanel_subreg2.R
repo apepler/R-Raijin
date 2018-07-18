@@ -133,12 +133,14 @@ par(mar=c(2,2,4,1))
    meanfreq=abind(meanfreq[181:360,],meanfreq[1:180,],along=1)
    meanfreq2=makesmooth(meanfreq)
    image(lon2,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
-          main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency"))
+          main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency"),
+          cex.main=1.5,cex.axis=1)
    map('world',add=T)
    contour(lon2,lat,meanfreq2,levels=breaks[seq(2,length(breaks),2)],add=T,lwd=1.5,col="black",drawlabels=F)
    } else {
    image(lon,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
-          main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency"))
+          main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency"),
+          cex.main=1.5,cex.axis=1)
    map('world2',add=T)   
    contour(lon,lat,meanfreq2,levels=breaks[seq(2,length(breaks),2)],add=T,lwd=1.5,col="black",drawlabels=F)
 

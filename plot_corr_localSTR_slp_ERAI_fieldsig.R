@@ -186,8 +186,12 @@ print('Cyclones done')
 ss=length(snames)
 inames=c("SLP","STRI","STRP")
 inum=3
-breaks=c(-10,seq(-7,7,1),10)/10
-col1=col_anom(length(breaks)-1)
+breaks=c(-10,seq(-7,-3,1),seq(3,7,1),10)/10
+#col1=col_anom(length(breaks)-1)
+library(RColorBrewer)
+#col1=colorRampPalette(rev(brewer.pal(11,"RdBu")))(length(breaks)-1)
+col1=rev(brewer.pal(length(breaks)-1,"RdBu"))
+
 pnum=1
 
 tmp=matrix(0,inum+1,ss)
@@ -264,13 +268,18 @@ for(i in 1:length(lon))
           main=tit)
   map('world2',add=T)
   pval=array(p.adjust(cyccorr[,,ii,s,2],"fdr"),dim(cyccorr[,,ii,s,2]))
+  pval2=pval
+  pval[tmp<0]=NaN
   contour(lon,lat,pval,levels=c(-100,0.05,100),add=T,lwd=2,col="black",drawlabels=F)  
+  pval2[tmp>0]=NaN
+  contour(lon,lat,pval2,levels=c(-100,0.05,100),add=T,lwd=1.5,col="black",drawlabels=F)
+
  }
 }
 
 print('Corrs done')
 
-ColorBar(breaks,col1,subsampleg=2,vert=F)
+ColorBar(breaks,col1,subsampleg=1,vert=F)
 dev.off()
 
 }
@@ -283,11 +292,11 @@ smons=rbind(c(5,10),c(11,4))
 plot_indcorr_panel(1980,2016,seasons=smons,snames=slist,
        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
        type="high",closed=T,move=500,
-       fout=paste0("paperfig_anticyccorr_strslp_ERAIpanel_proj100_rad10cv0.075_500km_2seasons_fieldsig.pdf"))
+       fout=paste0("paperfig_anticyccorr_strslp_ERAIpanel_proj100_rad10cv0.075_500km_2seasons_fieldsig_RdBu3.pdf"))
 
 
-plot_indcorr_panel(1980,2016,seasons=smons2,snames=slist2,
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
-       type="high",closed=T,move=500,
-       fout=paste0("paperfig_anticyccorr_strslp_ERAIpanel_proj100_rad10cv0.075_500km_4seasons_fieldsig.pdf"))
+#plot_indcorr_panel(1980,2016,seasons=smons2,snames=slist2,
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad5cv0.075/",
+#       type="high",closed=T,move=500,
+#       fout=paste0("paperfig_anticyccorr_strslp_ERAIpanel_proj100_rad10cv0.075_500km_4seasons_fieldsig.pdf"))
 

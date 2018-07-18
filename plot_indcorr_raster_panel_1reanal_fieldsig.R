@@ -135,9 +135,11 @@ lon=seq(0,359.5)  ### Can always combine into bigger cells later
 ss=length(snames)
 inum=length(inames)
 
-breaks=c(-1,seq(-0.7,-0.3,0.1),0,seq(0.3,0.7,0.1),1)
+breaks=c(-10,seq(-6,-3,1),seq(3,6,1),10)/10
 #breaks=c(1,seq(-0.7,0.7,0.1),1)
-col1=col_anom(length(breaks)-1)
+library(RColorBrewer)
+#col1=colorRampPalette(rev(brewer.pal(11,"RdBu")))(length(breaks)-1)
+col1=rev(brewer.pal(length(breaks)-1,"RdBu"))
 
 ## Any number of seasons & indices
 tmp=matrix(0,inum+1,ss)
@@ -210,8 +212,13 @@ n=0
           main=tit)
    map('world2',add=T)   
    pval=array(p.adjust(cyccorr[,,2],"fdr"),dim(cyccorr[,,2]))
+  pval2=pval
+  pval[cyccorr[,,1]<0]=NaN
 #   pval=fieldsig(cyccorr[,,2],alpha=0.05)
-   contour(lon,lat,pval<0.05,levels=c(-100,0.05,100),add=T,lwd=1.5,col="black",drawlabels=F)
+  contour(lon,lat,pval,levels=c(-100,0.05,100),add=T,lwd=2,col="black",drawlabels=F)
+  pval2[cyccorr[,,1]>0]=NaN
+  contour(lon,lat,pval2,levels=c(-100,0.05,100),add=T,lwd=1.5,col="black",drawlabels=F)
+
 #   contour(lon,lat,(pval<0.05 & cyccorr[,,1]<0),levels=c(-100,0.05,100),add=T,lwd=1.5,lty=2,drawlabels=F)
   }
 
@@ -260,7 +267,7 @@ plot_indcorr_panel(1980,2016,seasons=smons,
        snames=slist,inames=c("AOI","Hadley.NH","SOI","Hadley.SH","SAM"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_All_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig2.pdf"))
+       fout=paste0("paperfig_anticyccorr_All_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig_Bu.pdf"))
 
 #plot_indcorr_panel(1980,2016,seasons=smons,
 #       snames=slist,inames=c("AOI","Hadley.NH","SOI","Hadley.SH","SAM"),

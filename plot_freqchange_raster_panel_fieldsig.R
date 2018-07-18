@@ -91,8 +91,11 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(snames)
-breaks=c(-1000,-100,-75,-50,-25,-10,0,10,25,50,75,100,1000)
-col1=col_anom(length(breaks)-1)
+breaks=c(-1000,-75,-50,-25,-10,0,10,25,50,75,1000)
+#col1=col_anom(length(breaks)-1)
+library(RColorBrewer)
+#col1=colorRampPalette(rev(brewer.pal(11,"RdBu")))(length(breaks)-1)
+col1=rev(brewer.pal(length(breaks)-1,"RdBu"))
 pnum=1
 
 if(year1<1979)
@@ -150,12 +153,17 @@ for(n in startN:3)
    cyctrend[,,3]=100*((cyctrend[,,2]/cyctrend[,,1])-1)
  
    tmp=cyctrend[,,3]
-   tmp[cyctrend[,,4]>=0.05]=NaN
+#   tmp[cyctrend[,,4]>=0.05]=NaN
    image(lon,lat,tmp,breaks=breaks,col=col1,xlab="",ylab="",
           main=tit)
    map('world2',add=T) 
    pval=array(p.adjust(cyctrend[,,4],"fdr"),dim(cyctrend[,,4]))  
-   contour(lon,lat,pval<0.05,levels=c(-100,0.05,100),add=T,lwd=2,col="black",drawlabels=F)
+   pval2=pval
+  pval[tmp<0]=NaN
+   contour(lon,lat,pval,levels=c(-100,0.05,100),add=T,lwd=2,col="black",drawlabels=F)
+  pval2[tmp>0]=NaN
+  contour(lon,lat,pval2,levels=c(-100,0.05,100),add=T,lwd=1.5,col="black",drawlabels=F)
+
 #   contour(lon,lat,(pval<0.05 & tmp<0),levels=c(-100,0.05,100),add=T,lwd=2,lty=2,col="black",drawlabels=F)
 
 
@@ -171,7 +179,7 @@ dev.off()
 plot_freqchange_panel(1960,2016,year3=1997,year4=1979,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
         type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-        fout="paperfig_anticycchcange_3reanals_proj100_rad10cv0.075_500km")
+        fout="paperfig_anticycchcange_3reanals_proj100_rad10cv0.075_500km_RdBu")
 #plot_freqchange_panel(1960,2016,year3=1997,year4=1979,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
 #        type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",

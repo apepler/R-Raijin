@@ -94,7 +94,11 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(pnames)
-col1=col_val(length(breaks)-1)
+#col1=col_val(length(breaks)-1)
+library(RColorBrewer)
+#   col1=colorRampPalette(brewer.pal(9,"Blues"))(length(breaks)-1)
+   col1=brewer.pal(length(breaks)-1,"Blues")
+
 pnum=1
 pdf(file=fout,width=10,height=ss*1.5)
 if(ss==2) layout(cbind(1,2,3),width=c(1,1,0.25)) else
@@ -131,12 +135,12 @@ for(n in 1:length(pnames))
    image(lon2,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
           main=paste0(letters[pnum],") Mean ",type," frequency: ",pnames[n]))
    map('world',add=T)
-   contour(lon2,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   contour(lon2,lat,meanfreq2,levels=breaks[seq(2,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
    } else {
    image(lon,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
           main=paste0(letters[pnum],") Mean ",type," frequency: ",pnames[n]))
    map('world2',add=T)   
-   contour(lon,lat,meanfreq2,levels=breaks[seq(4,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   contour(lon,lat,meanfreq2,levels=breaks[seq(2,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
 #   contour(lon,lat,meanfreq2,levels=breaks,add=T,lwd=2,col="black",drawlabels=F)
    }
    pnum=pnum+1
@@ -164,8 +168,8 @@ dev.off()
 #        proj=c("proj100_rad10cv0.075_500km",paste0(c(850,700,500),"hPa_proj100_rad10cv0.5_500km")),latlim=c(-50,-10),lonlim=c(100,180),
 #        fout="paperfig_anticycfreqvheight_500km_ERAI_aust2.pdf")
 
-plot_freq_panel(1980,2016,season=c(1,12),breaks=c(0,0.05,seq(0.25,3,0.25),1000),
+plot_freq_panel(1980,2016,season=c(1,12),breaks=c(0,0.05,seq(0.5,3,0.5),1000),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
         type="anticyclone",reanal="ERAI",pnames=c("All MSLP anticyclones","Length>=6 hours","500km movement","All 850hPa anticyclones"),
         proj=c("proj100_rad10cv0.075","proj100_rad10cv0.075_D2","proj100_rad10cv0.075_500km","850hPa_proj100_rad10cv0.5"),#latlim=c(-50,-10),lonlim=c(100,180),
-        fout="paperfig_anticycfreqvduration_ERAI_global.pdf")
+        fout="paperfig_anticycfreqvduration_ERAI_global_Bu.pdf")

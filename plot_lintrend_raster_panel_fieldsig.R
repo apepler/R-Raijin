@@ -99,7 +99,9 @@ lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(snames)
 breaks=c(-100,seq(-2,2,0.5),100)
-col1=col_anom(length(breaks)-1)
+#col1=col_anom(length(breaks)-1)
+library(RColorBrewer)
+col1=rev(brewer.pal(length(breaks)-1,"RdBu"))
 
 if(year1<1979)
 {
@@ -147,15 +149,22 @@ for(n in startN:3)
       a=lm(freq[i,j,]~years[J])
       b=summary(a)$coefficients
       cyctrend[i,j,2]=b[2,4]
-      if(b[2,4]<0.05) cyctrend[i,j,1]=100*a$coefficients[2]/meanfreq[i,j] 
+#      if(b[2,4]<0.05) cyctrend[i,j,1]=100*a$coefficients[2]/meanfreq[i,j] 
+      cyctrend[i,j,1]=100*a$coefficients[2]/meanfreq[i,j]
       }
 
    image(lon,lat,cyctrend[,,1],breaks=breaks,col=col1,xlab="",ylab="",
           main=tit)
    map('world2',add=T)   
    pval=array(p.adjust(cyctrend[,,2],"fdr"),dim(cyctrend[,,2]))
+   pval2=pval
 #   pval=fieldsig(cyctrend[,,2],0.05)
+   pval[cyctrend[,,1]<0]=NaN
    contour(lon,lat,pval,levels=c(-100,0.05,100),add=T,lwd=2,col="black",drawlabels=F)
+  pval2[cyctrend[,,1]>0]=NaN
+  contour(lon,lat,pval2,levels=c(-100,0.05,100),add=T,lwd=1.5,col="black",drawlabels=F)
+
+
   }
 }
 
@@ -166,10 +175,10 @@ dev.off()
 plot_lintrend_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout="paperfig_anticyclintrend8016_3reanals_proj100_rad10cv0.075_500km_fieldsig2.pdf")
+       fout="paperfig_anticyclintrend8016_3reanals_proj100_rad10cv0.075_500km_fieldsig_RdBu.pdf")
 
-plot_lintrend_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
-       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
-       fout="paperfig_cyclintrend8016_3reanals_proj100_rad5cv0.15_500km_fieldsig2.pdf")
+#plot_lintrend_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
+#       dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#       type="cyclone",proj="proj100_rad5cv0.15",type2="_500km",
+#       fout="paperfig_cyclintrend8016_3reanals_proj100_rad5cv0.15_500km_fieldsig2.pdf")
 

@@ -89,9 +89,12 @@ lat=seq(-89.5,89.5)
 lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(snames)
-breaks=c(0,0.05,seq(0.25,1,0.25),1.5,2,1000)
+breaks=c(0,0.05,seq(0.25,1,0.25),1.5,1000)
 #breaks=c(0,0.05,seq(0.1,1,0.1),1000)
-col1=col_val(length(breaks)-1)
+#col1=col_val(length(breaks)-1)
+library(RColorBrewer)
+col1=brewer.pal(length(breaks)-1,"Blues")
+
 pnum=1
 if(year1<1979)
 {
@@ -131,7 +134,8 @@ for(n in startN:3)
    image(lon,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",
           main=paste0(letters[pnum],") ",snames[s]," mean ",type," frequency: ",reanals[n]))
    map('world2',add=T)   
-   contour(lon,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+#   contour(lon,lat,meanfreq2,levels=breaks[seq(3,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   contour(lon,lat,meanfreq2,levels=c(0.05,0.5,1,1.5),add=T,lwd=1.5,col="black",drawlabels=F)
    pnum=pnum+1
   }
 }
@@ -165,7 +169,7 @@ dev.off()
 plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
         type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_v2")
+        fout="paperfig_anticycfreq_3reanals_proj100_rad10cv0.075_500km_Bu")
 
 #plot_freq_panel(1980,2016,seasons=rbind(c(5,10),c(11,4)),snames=c("MJJASO","NDJFMA"),
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
