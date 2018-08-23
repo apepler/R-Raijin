@@ -110,13 +110,30 @@ nc_close(ncout)
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
 #     outf="ERAI_UM_globalanticyclones_proj100_rad10cv0.75_notopo_500km.nc")
 
-for(lev in c(500,925,850,700))
+#extract_counts(1980,2016,type="low",thresh=1.5,closed=T,
+#     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj240_lows_rad2cv1/"),
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf=paste0("ERAI_UM_globalcyclones_proj240_rad2cv1.5.nc"))
+
+#extract_counts(1980,2016,type="low",thresh=0.37,closed=T,
+#     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj240_lows_rad5cv0.15/"),
+#     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+#     outf=paste0("ERAI_UM_globalcyclones_proj240_rad5cv0.37.nc"))
+
+for(lev in c(700,925,600,300))
 {
-extract_counts(1980,2016,type="low",thresh=5,move=500,
-     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj240_lows_rad5cv5/"),
+extract_counts(1980,2016,type="low",thresh=12,closed=T,
+     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj240_lows_rad2cv10/"),
      outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
-     outf=paste0("ERAI_UM_globalcyclones_",lev,"hPa_proj240_rad5cv5_500km.nc"))
+     outf=paste0("ERAI_UM_globalcyclones_",lev,"hPa_proj240_rad2cv12.nc"))
+extract_counts(1980,2016,type="low",thresh=3,closed=T,
+     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj240_lows_rad5cv2/"),
+     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",
+     outf=paste0("ERAI_UM_globalcyclones_",lev,"hPa_proj240_rad5cv3.nc"))
 }
+
+
+
 #extract_counts(1980,2016,type="low",thresh=1,dur=2,
 #     dir=paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad2cv1/"),
 #     outdir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf/",

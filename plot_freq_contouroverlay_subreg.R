@@ -61,16 +61,21 @@ ColorBar <- function(brks,cols,vert=T,subsampleg=1)
 
 lat=seq(-89.5,89.5)
 lon=seq(0,359.5)
-makesmooth<-function(data,winwid=5)
+makesmooth<-function(data,winwid=2,makesum=F)
 {
   a=dim(data)
-  m1=abind(data[(a[1]-winwid):a[1],a[2]:1],data[,a[2]:1],data[1:winwid,a[2]:1],along=1)
+  
+  if(lat[2]<lat[1]) ll=a[2]:1 else ll=1:a[2]
+
+  m1=abind(data[(a[1]-winwid+1):a[1],ll],data[,ll],data[1:winwid,ll],along=1) 
   m2=raster(t(m1),xmn=min(lon)-winwid,xmx=max(lon)+winwid,ymn=min(lat),ymx=max(lat))
-  w2=focalWeight(m2,winwid,type="circle")
+  w2=focalWeight(m2,winwid,type="circle") 
+  if(makesum) w2[w2>0]=1
   m3=focal(m2,w2)
-  tmp=t(as.matrix(m3)[a[2]:1,(winwid+1):(a[1]+winwid)])
+  tmp=t(as.matrix(m3)[ll,(winwid+1):(a[1]+winwid)])
   return(tmp)
 }
+
 
 
 plot_freq_panel<-function(year1,year2,season=c(1,12),
@@ -95,16 +100,20 @@ lon=seq(0,359.5)  ### Can always combine into bigger cells later
 
 ss=length(pnames)
 #col1=col_val(length(breaks)-1)
-library(RColorBrewer)
+library(viridisLite)
 library(oz)
-if(length(breaks)<=10) col1=brewer.pal(length(breaks)-1,"Blues") else col1=colorRampPalette(brewer.pal(9,"Blues"))(length(breaks)-1)
+col1=viridis(length(pnames)+1)[1:length(pnames)]
+#col1=c("black","darkgray")
+#col1=c("blue","red")
 
 pnum=1
-pdf(file=fout,width=10,height=ss*1.5)
-if(ss==2) layout(cbind(1,2,3),width=c(1,1,0.25)) else
-  layout(rbind(c(seq(1,ss/2),ss+1),c(seq((ss/2)+1,ss),ss+1)),width=c(1,1,0.25))
+pdf(file=fout,width=4,height=3)
+par(mar=rep(0.2,4))
 
-par(mar=c(2,2,4,1))
+map('world2',xlim=lonlim,ylim=latlim,xlab="",ylab="",
+    main=paste0("Mean ",type," frequency"))
+if(ozmap) oz(states=T,add=T)
+box()
 
 for(n in 1:length(pnames))
 {
@@ -124,31 +133,20 @@ for(n in 1:length(pnames))
     for(y in 1:(length(I)-1)) freq[,,y]=apply(tmp[,,y,],c(1,2),sum,na.rm=T)
    }
 
-   meanfreq=apply(freq,c(1,2),mean,na.rm=T)
-   meanfreq2=makesmooth(meanfreq)
-
    if(lonlim[1]<0) {
    lon2=seq(-179.5,179.5,1)
-   library(abind)
    meanfreq=abind(meanfreq[181:360,],meanfreq[1:180,],along=1)
-   meanfreq2=makesmooth(meanfreq)
-   image(lon2,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
-          main=paste0(letters[pnum],") Mean ",type," frequency: ",pnames[n]))
-   map('world',add=T)
-   if(ozmap) oz(states=T,add=T)
-   contour(lon2,lat,meanfreq2,levels=breaks[seq(2,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
+   meanfreq2=makesmooth(meanfreq,makesum=T,winwid=2)
+   contour(lon2,lat,makesmooth(meanfreq2,winwid=2),levels=breaks,add=T,lwd=3,col=col1[n],labcex=0.8)
    } else {
-   image(lon,lat,meanfreq,breaks=breaks,col=col1,xlab="",ylab="",xlim=lonlim,ylim=latlim,
-          main=paste0(letters[pnum],") Mean ",type," frequency: ",pnames[n]))
-   map('world2',add=T)   
-   if(ozmap) oz(states=T,add=T)
-   contour(lon,lat,meanfreq2,levels=breaks[seq(2,length(breaks),2)],add=T,lwd=2,col="black",drawlabels=F)
-#   contour(lon,lat,meanfreq2,levels=breaks,add=T,lwd=2,col="black",drawlabels=F)
+   meanfreq=apply(freq,c(1,2),mean,na.rm=T)
+   meanfreq2=makesmooth(meanfreq,makesum=T,winwid=2)
+   contour(lon,lat,makesmooth(meanfreq2,winwid=2),levels=breaks,add=T,lwd=3,col=col1[n],labcex=0.8)
    }
-   pnum=pnum+1
+
 }
 
-ColorBar(breaks,col1,subsampleg=1,vert=T)
+legend("topright",pnames,lwd=3,col=col1,ncol=2,bg="white")
 dev.off()
 }
 
@@ -176,10 +174,10 @@ dev.off()
 #        proj=c("proj100_rad10cv0.075","proj100_rad10cv0.075_D2","proj100_rad10cv0.075_500km","850hPa_proj100_rad10cv0.5"),#latlim=c(-50,-10),lonlim=c(100,180),
 #        fout="paperfig_anticycfreqvduration_ERAI_global_Bu.pdf")
 
-plot_freq_panel(1980,2016,season=c(1,12),breaks=c(0,0.05,seq(0.1,1.5,0.1),1000),
+plot_freq_panel(1980,2016,season=c(1,12),breaks=c(1,5,10,15,20),
         dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="cyclone",reanal="ERAI",pnames=c("MSLP","850 hPa","700 hPa","500 hPa"),
-        proj=c("proj240_rad2cv1.5",paste0(c(850,700,500),"hPa_proj240_rad2cv12")),
+        type="cyclone",reanal="ERAI",pnames=c("MSLP","500 hPa"),
+        proj=c("proj240_rad2cv1.5",paste0(500,"hPa_proj240_rad2cv12")),
         latlim=c(-45,-20),lonlim=c(130,180),ozmap=T,
-        fout="paperfig_cyclones_rad2vheight_ERAI_SEA_Bu.pdf")
+        fout="cyclonefreq_contours_rad2vheight_MSLP500_ERAI_SEA_viridis.pdf")
 

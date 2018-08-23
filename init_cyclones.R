@@ -1,11 +1,13 @@
 ### SOURCE THIS AT START
 ### Lots of useful functions & base libraries
-
+library(raster)
 library(sp)
-#library(fields)
+library(fields)
 library(abind)
 library(ncdf4)
-
+library(RColorBrewer)
+library(maps)
+library(oz)
 
 source("/short/eg3/asp561/R/color.palette.R")
 col_anom <- color.palette(c("darkred","red","white","blue","darkblue"),c(10,20,20,10))
@@ -147,5 +149,29 @@ make_events<-function(fixes)
     
   }
   return(as.data.frame(events))
+}
+
+makesmooth<-function(data,winwid=3,circ=T,lon=NaN,lat=NaN,spread=F)
+{
+  a=dim(data)
+  
+  if(is.na(lon[1]))
+  {
+    lon=seq(1,a[1])
+    lat=seq(1,a[2])
+  }
+  
+  if(lat[2]<lat[1]) ll=a[2]:1 else ll=1:a[2]
+  
+  ## Only make cyclic if it's actually global, -180 to 180 or 0 to 360
+  if(lon[2]-lon[1]>=350) m1=abind(data[(a[1]-winwid+1):a[1],ll],data[,ll],data[1:winwid,ll],along=1) else
+    m1=abind(matrix(0,winwid,a[2]),data[,ll],matrix(0,winwid,a[2]),along=1)
+  
+  m2=raster(t(m1),xmn=min(lon)-winwid,xmx=max(lon)+winwid,ymn=min(lat),ymx=max(lat))
+  if(circ) w2=focalWeight(m2,winwid,type="circle") else w2=matrix(1,1+2*winwid,1+2*winwid)
+  if(spread) m3=focal(m2,w2,pad=T,padValue=0) else m3=focal(m2,w2)
+  tmp=t(as.matrix(m3)[ll,(winwid+1):(a[1]+winwid)])
+  if(spread) tmp[tmp>0]=1
+  return(tmp)
 }
 
