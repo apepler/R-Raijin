@@ -13,7 +13,32 @@ source("/short/eg3/asp561/R/color.palette.R")
 col_anom <- color.palette(c("darkred","red","white","blue","darkblue"),c(10,20,20,10))
 col_val <- color.palette(c("white","blue","darkblue","black"),c(20,10,5))
 
-ColorBar <- function(brks,cols,vert=T,subsampleg=1)
+ColorBar <- function(brks,cols,vert=T,subsampleg=1,skip1=T)
+{
+  if(vert) {
+    par(mar = c(2, 1, 2, 3), mgp = c(1, 1, 0), las = 1, cex = 1)
+    image(1, c(1:length(cols)), t(c(1:length(cols))), axes = FALSE, col = cols,
+          xlab = '', ylab = '')
+    box()
+    if(skip1)
+      axis(4, at = seq(1.5, length(brks) - 1.5, subsampleg), tick = TRUE,
+         labels = brks[seq(2, length(brks)-1, subsampleg)]) else
+           axis(4, at = seq(0.5, length(brks) - 1.5, subsampleg), tick = TRUE,
+                labels = brks[seq(1, length(brks)-1, subsampleg)])
+  } else {
+    par(mar = c(1.5, 1, 1, 1), mgp = c(1.5, 0.3, 0), las = 1, cex = 1)
+    image(1:length(cols), 1, t(t(1:length(cols))), axes = FALSE, col = cols,
+          xlab = '', ylab = '')
+    box()
+    if(skip1) 
+      axis(1, at = seq(1.5, length(brks) - 1.5, subsampleg),
+         labels = brks[seq(2, length(brks)-1, subsampleg)]) else
+           axis(1, at = seq(0.5, length(brks) - 1.5, subsampleg),
+                labels = brks[seq(1, length(brks)-1, subsampleg)])
+  }
+}
+
+ColorBar2 <- function(brks,cols,vert=T,subsampleg=1)
 {
   par(mar = c(3, 1, 3, 3), mgp = c(1, 1, 0), las = 1, cex = 0.8)
   image(1, c(1:length(cols)), t(c(1:length(cols))), axes = FALSE, col = cols, 

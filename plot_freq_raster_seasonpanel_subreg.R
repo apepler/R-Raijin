@@ -195,15 +195,15 @@ dev.off()
 #        latlim=c(-50,-10),lonlim=c(90,180),breaks=c(0,0.05,seq(0.1,0.5,0.05),1000),
 #        fout=paste0("paperfig_cycfreq_ERAI_rad5cv0.5_2season_500km_australia2.pdf"))
 
-#plot_freq_panel(1980,2016,seasons=cbind(c(5,11),c(10,4)),snames=c("May-October","November-April"),
-#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",boxes=T,
-#        type="anticyclone",reanal="ERAI",proj="proj100_rad10cv0.075_500km",
-#        latlim=c(-50,-10),lonlim=c(90,180),breaks=c(0,0.05,seq(0.2,2,0.2),1000),
-#        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_2season_500km_australia_boxes3.pdf")
-
-plot_freq_panel(1980,2016,seasons=cbind(c(12,3,6,9),c(2,5,8,11)),snames=c("DJF","MAM","JJA","SON"),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+plot_freq_panel(1980,2016,seasons=cbind(c(5,11),c(10,4)),snames=c("May-October","November-April"),
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",boxes=T,
         type="anticyclone",reanal="ERAI",proj="proj100_rad10cv0.075_500km",
-        breaks=c(0,0.05,seq(0.1,0.8,0.1),1000),
-        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_seasonal_500km_global_Bu.pdf")
+        latlim=c(-50,-10),lonlim=c(90,180),breaks=c(0,0.05,seq(0.2,2,0.2),1000),
+        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_2season_500km_australia_boxes3_Bu.pdf")
+
+#plot_freq_panel(1980,2016,seasons=cbind(c(12,3,6,9),c(2,5,8,11)),snames=c("DJF","MAM","JJA","SON"),
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#        type="anticyclone",reanal="ERAI",proj="proj100_rad10cv0.075_500km",
+#        breaks=c(0,0.05,seq(0.1,0.8,0.1),1000),
+#        fout="paperfig_anticycfreq_ERAI_rad10cv0.075_seasonal_500km_global_Bu.pdf")
 

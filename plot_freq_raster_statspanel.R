@@ -237,9 +237,14 @@ smons2=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
 slist=c("MJJASO","NDJFMA")
 smons=rbind(c(5,10),c(11,4))
 
+#plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",
+#        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500kmstats_Bu2")
+
 plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,
         dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",
-        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500kmstats_Bu2")
+latlim=c(-50,-10),lonlim=c(100,180),
+        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500kmstats_aust2_Bu")
 
 #plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,type="cyclone",
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",

@@ -224,9 +224,9 @@ get_austevents<-function(yearS,yearE,output,type="high",closed=T,lonlim=c(110,15
 #setwd('/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj240_lows_rad5cv0.15/')
 #get_austevents(1979,2016,"UM_lows_ERAI_proj240_rad5cv0.15_bigaust",type="low",closed=F,lonlim=c(100,180),latlim=c(-60,-10))
 
-for(lev in 300)
+for(lev in 500)
 {
-setwd(paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj240_lows_rad2cv10/"))
+setwd(paste0("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev,"hPa_z/proj240_lows_rad2cv10_v2/"))
 get_austevents(1979,2016,paste0("UM_lows_ERAI_",lev,"hPa_proj240_rad2cv10_bigaust"),type="low",closed=F,lonlim=c(100,180),latlim=c(-60,-10))
 }
 

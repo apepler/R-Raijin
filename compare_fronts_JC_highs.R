@@ -38,7 +38,7 @@ spreadeffect<-function(data,winwid=3,circ=T,lon=NaN,lat=NaN)
 }
 
 
-jen_compare<-function(year,dir="/short/eg3/asp561/cts.dir/gcyc_out/",jdir="/g/data/eg3/asp561/CattoData_20052015/",outf=NA,lonlim=c(-180,180),latlim=c(-90,90),winwid=0,len=NA,cold=F,expandF=T,shiftR=F,daily=F)
+jen_compare<-function(year,dir="/short/eg3/asp561/cts.dir/gcyc_out/",jdir="/g/data/eg3/asp561/CattoData_20052015/",outf=NA,lonlim=c(-180,180),latlim=c(-90,90),winwid=0,winwidH=7,thresh=0,dur=NA,move=NA,closed=F,cold=T,daily=F)
 {
 
 datelist=seq.POSIXt(as.POSIXct(paste0(year,"0101 00:00"),format="%Y%m%d %H:%M",tz="GMT"),as.POSIXct(paste0(year+1,"0101 00:00"),format="%Y%m%d %H:%M",tz="GMT"),by="6 hours")
@@ -66,16 +66,6 @@ jc_front<-array(0,dim(tmp))
 jc_front[tmp%in%c(2,4,6,7)]=1 ## Fronts
 lat=ncvar_get(a,"lat")
 lon=ncvar_get(a,"lon")
-}
-
-if(daily)
-{
-datelist2=as.numeric(format(datelist,"%Y%m%d"))
-daylist=unique(datelist2)
-tmp=array(0,c(length(lon),length(lat),length(daylist)))
-
-for(t in 1:length(daylist)) tmp[,,t]=apply(jc_front[,,datelist2==daylist[t]],c(1,2),max)
-jc_front=tmp
 }
 
 dlat=abs(lat[2]-lat[1])
@@ -111,75 +101,85 @@ lon2=lon/dlat
 }
 
 final_front<-array(0,dim(jc_front))
-
-fixes=read.table(paste0(dir,"ERAI_fronts_",year,".dat"),header=F,stringsAsFactors=F)
-colnames(fixes)=c("ID","Point","Date","Time","Lat","Lon","Vdiff")
+fname=paste(dir,"/tracks_",year,".dat",sep="")
+read.table(fname, sep="",skip=1)->fixes
+colnames(fixes)=c("ID","Fix","Date","Time","Open","Lon","Lat","MSLP","CV","Meh")
 fixes$Year=floor(fixes$Date/10000)
-#fixes=fixes[fixes$Year==year,]
+if(length(unique(fixes$Year))>1) fixes=fixes[fixes$Year==unique(fixes$Year)[2],]
+fixes$Month=floor(fixes$Date/100)%%100
+fixes$CV=abs(fixes$CV)
+
 fixes$Lat2=round(fixes$Lat/dlat,0)
-fixes$Lon2=round((fixes$Lon%%360)/dlon,0)
-fixes$Date2=as.POSIXct(paste0(fixes$Date," ",fixes$Time/100,":00"),format="%Y%m%d %H:%M",tz="GMT")
-if(shiftR) fixes$Date2=fixes$Date2+60*60*6 # Attribute front to next 6 hour 
+fixes$Lon2=fixes$Lon%%360
+if(min(lon)<0) fixes$Lon2[fixes$Lon2>180]=fixes$Lon2[fixes$Lon2>180]-360
+fixes$Lon2=round(fixes$Lon2/dlon,0)
+fixes$Date2=as.POSIXct(paste0(year*10000+fixes$Date%%10000," ",fixes$Time),format="%Y%m%d %H:%M",tz="GMT")
 
-x<-rle(fixes$ID)
-events<-data.frame(ID=x$values,Length=x$lengths)
+ if(!is.na(move))
+ {
+    x<-rle(fixes$ID)
+    events<-data.frame(ID=x$values,Length=x$lengths,Date1=rep(0,length(x$values)),Move=rep(0,length(x$values)))
+    for(i in 1:length(events$ID))
+    {
+    events$Date1[i]=min(fixes$Date[fixes$ID==events$ID[i]])
+    I=which(fixes$ID==events[i,1])
+    events$Move[i]=spDistsN1(cbind(fixes$Lon[min(I)],fixes$Lat[min(I)]),
+                           cbind(fixes$Lon[max(I)],fixes$Lat[max(I)]),longlat=T)
+    }
 
-if(!is.na(len)) ## Get rid of short fronts
-{
-  events=events[events[,2]>=len,]
+  events=events[events$Move>=move,]
   include<-match(fixes[,1],events[,1])
   J<-which(is.na(include)==0)
   fixes=fixes[J,]
-}
-
-if(expandF) ## Interpolates between points, if we care
-{
-init=F
-for(i in 1:length(events$ID))
-{
-I=which(fixes$ID==events$ID[i])
-tmplat=lat2[lat2>=min(fixes$Lat2[I]) & lat2<=max(fixes$Lat2[I])]
-if(length(tmplat)>0)
-{
- tmplon=approx(fixes$Lat2[I],fixes$Lon[I],tmplat)
- tmplon2=round((tmplon$y%%360)/dlon,0)
- tmp=data.frame(Lon2=tmplon2,Lat2=tmplat,Date2=rep(fixes$Date2[I[1]],length(tmplat)))
-
- if(init) fixes2=rbind(fixes2,tmp) else {
-   fixes2=tmp
-   init=T
  }
- }
-}
-fixes=fixes2
-}
+ if(!is.na(dur))
+  {
+  x<-rle(fixes$ID)
+  events<-cbind(x$values,x$lengths,matrix(data=0,nrow=length(x$values),ncol=1))
+  events=events[events[,2]>=dur,]
+  include<-match(fixes[,1],events[,1])
+  J<-which(is.na(include)==0)
+  fixes=fixes[J,]
+  }
+  fixes=fixes[abs(fixes$CV)>=thresh,]
+  if(closed) fixes=fixes[(fixes$Open==0 | fixes$Open==10),] # Remove all open sys
+
 grid1=table(factor(fixes$Lon2,levels=lon2),factor(fixes$Lat2,levels=lat2),factor(as.character(fixes$Date2),levels=as.character(datelist)))
 
-ir_front=array(0,dim(grid1))
-if(winwid>0) for(i in 1:length(datelist)) ir_front[,,i]=spreadeffect(grid1[,,i],lon=rlon,lat=rlat,circ=T,winwid=winwid)
-
-if(daily)
-{
-aa=dim(grid1)
-tmp=array(0,c(aa[1],aa[2],length(daylist)))
-for(t in 1:length(daylist)) tmp[,,t]=apply(ir_front[,,datelist2==daylist[t]],c(1,2),max)
-ir_front=tmp
-}
+highs=array(0,dim(grid1))
+for(i in 1:length(datelist)) highs[,,i]=spreadeffect(grid1[,,i],lon=rlon,lat=rlat,circ=T,winwid=winwidH)
 
 ## Now, need to shrink this if necessary
 if(min(lat)>-80 | max(lat)<=80)
 {
 I=which(rlon%in%lon)
 J=which(rlat%in%lat)
-ir_front=ir_front[I,J,]
+highs=highs[I,J,]
 }
 
-I=which(jc_front==1 & ir_front==1)
+I=which(jc_front==1 & highs==0)
 final_front[I]=1
-I=which(jc_front==1 & ir_front==0)
+I=which(jc_front==1 & highs==1)
 final_front[I]=2
-I=which(jc_front==0 & ir_front==1)
-final_front[I]=3
+
+if(daily)
+{
+datelist2=as.numeric(format(datelist,"%Y%m%d"))
+daylist=unique(datelist2)
+tmp=array(0,c(length(lon),length(lat),length(daylist)))
+
+for(t in 1:length(daylist))
+{
+tmp1=apply(final_front[,,datelist2==daylist[t]]==1,c(1,2),sum)
+tmp2=apply(final_front[,,datelist2==daylist[t]]==2,c(1,2),sum)
+
+tmp3=array(0,c(length(lon),length(lat)))
+tmp3[tmp2>0]=2
+tmp3[tmp1>0]=1 # If any are highs-fre it's highs-free, otherwise not
+tmp[,,t]=tmp3
+}
+final_front=tmp
+}
 
 I=which(lon>=min(lonlim) & lon<=max(lonlim))
 J=which(lat>=min(latlim) & lat<=max(latlim))
@@ -194,7 +194,7 @@ dimT<-ncdim_def("time","hours since 1970-1-1 00:00:00",as.numeric(tmp)/(60*60))
 
 fillvalue <- 9999
 print(unique(as.numeric(final_front),na.rm=T))
-cyc_def <- ncvar_def("FRONTFLAG","count",list(dimX,dimY,dimT),fillvalue,"Front flag - 1 for if a front in both Rudeva and Catto datasets, 2 if Catto only, 3 if Rudeva only",prec="integer")
+cyc_def <- ncvar_def("FRONTFLAG","count",list(dimX,dimY,dimT),fillvalue,"Front flag - 1 if a front in Catto is not overlapped by a high, 2 for if it is (so not real)",prec="integer")
 
 # create netCDF file and put arrays
 ncout <- nc_create(paste0(dir,outf),cyc_def) #force_v4=T)
@@ -211,11 +211,12 @@ nc_close(ncout)
 
 } # End function
 
-for(years in 1979:2014)
+for(years in 2015)
 {
-jen_compare(years,winwid=3,len=3,cold=T,expandF=T,shiftR=T,daily=T,
-     jdir="/g/data/eg3/ajd548/vicci/front_data_JC/",
-     dir="/g/data/eg3/asp561/Fronts/",
-     outf=paste0("frontcomp_cattocold_rudevalen2_plus6h_3deg_",years,"_dailyfix.nc"))
+jen_compare(years,winwid=3,winwidH=8,cold=F,closed=T,daily=T,
+     jdir="/g/data/eg3/asp561/CattoData_20052015/",
+#     jdir="/g/data/eg3/ajd548/vicci/front_data_JC/",
+     dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",
+     outf=paste0("frontcomp_cattoall_highs8deg_proj100_rad10cv0.075_",years,"_daily.nc"))
 }
 

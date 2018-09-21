@@ -112,6 +112,8 @@ par(mar=rep(0.2,4))
 
 map('world2',xlim=lonlim,ylim=latlim,xlab="",ylab="",
     main=paste0("Mean ",type," frequency"))
+axis(1,cex.axis=0.7)
+axis(2,cex.axis=0.7)
 if(ozmap) oz(states=T,add=T)
 box()
 

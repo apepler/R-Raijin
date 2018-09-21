@@ -213,8 +213,8 @@ for(y in 1:length(years))
 for(v in 1:vv)
 {
 breaks=vbreaks[[v]]
-col1=col_val(length(breaks))
-col1=col1[-1]
+   col1=colorRampPalette(brewer.pal(9,"Blues"))(length(breaks))
+   col1=col1[-1]
 ColorBar(breaks,col1,subsampleg=1,vert=T,nstart=2)
 }
 dev.off()
@@ -227,9 +227,15 @@ smons2=rbind(c(3,5),c(6,8),c(9,11),c(12,2))
 slist=c("MJJASO","NDJFMA")
 smons=rbind(c(5,10),c(11,4))
 
+#plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",#latlim=c(-50,-10),lonlim=c(100,180),
+#        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500stats_global2")
+
 plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",#latlim=c(-50,-10),lonlim=c(100,180),
-        reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500stats_global2")
+   dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/",
+   latlim=c(-50,-10),lonlim=c(100,180),
+   reanal="ERAI",fout="paperfig_anticycfreq_ERAI_rad10cv0.075_500kmstats_aust2_Bu")
+
 
 #plot_freq_panel(1980,2016,season=c(1,12),breaks=breaks,closed=T,move=500,type="cyclone",
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",

@@ -9,6 +9,7 @@
 ## That shows the number of cyclones centred in that month
 ## Option to set a higher intensity threshold
 library(sp)
+library(raster)
 library(ncdf4)
 library(abind)
 
@@ -37,7 +38,7 @@ spreadeffect<-function(data,winwid=3,circ=T,lon=NaN,lat=NaN)
 }
 
 
-jen_compare<-function(year,dir="/short/eg3/asp561/cts.dir/gcyc_out/",jdir="/g/data/eg3/ajd548/vicci/cyclone_data_JC/",thresh=0,dur=NA,outf=NA,move=NA,closed=F,lonlim=c(-180,180),latlim=c(-90,90),winwid=0)
+jen_compare<-function(year,dir="/short/eg3/asp561/cts.dir/gcyc_out/",jdir="/g/data/eg3/ajd548/vicci/cyclone_data_JC/",thresh=0,dur=NA,outf=NA,move=NA,closed=F,lonlim=c(-180,180),latlim=c(-90,90),winwid=0,winwid2=0,daily=F)
 {
 
 datelist=seq.POSIXt(as.POSIXct(paste0(year,"0101 00:00"),format="%Y%m%d %H:%M",tz="GMT"),as.POSIXct(paste0(year+1,"0101 00:00"),format="%Y%m%d %H:%M",tz="GMT"),by="6 hours")
@@ -105,7 +106,7 @@ for(t in 1:length(datelist))
 {
 print(t)
 tmp1=jc_cyc[,,t]
-if(winwid==0) tmp2=grid1[,,t] else spreadeffect(grid1[,,t],lon=lon,lat=lat,circ=T,winwid=winwid)
+if(winwid==0) tmp2=grid1[,,t] else tmp2=spreadeffect(grid1[,,t],lon=lon,lat=lat,circ=T,winwid=winwid)
 
 tmp3=array(0,dim(tmp1))
 idlist=unique(tmp1[tmp1>0]) # List of IDs
@@ -118,12 +119,39 @@ if(max(tmp2[I])>0) tmp3[I]=1 else tmp3[I]=2 # Flag as 1 if matched by UM, 2 othe
 final_cyc[,,t]=tmp3
 }
 
+if(daily)
+{
+datelist2=as.numeric(format(datelist,"%Y%m%d"))
+daylist=unique(datelist2)
+tmp=array(0,c(length(lon),length(lat),length(daylist)))
+
+for(t in 1:length(daylist)) 
+{
+tmp1=apply(final_cyc[,,datelist2==daylist[t]]==1,c(1,2),sum)
+tmp2=apply(final_cyc[,,datelist2==daylist[t]]==2,c(1,2),sum)
+
+if(winwid2>0) tmp1=spreadeffect(tmp1,lon=lon,lat=lat,circ=T,winwid=winwid2)
+if(winwid2>0) tmp2=spreadeffect(tmp2,lon=lon,lat=lat,circ=T,winwid=winwid2)
+
+tmp3=array(0,c(length(lon),length(lat)))
+tmp3[tmp2>0]=2
+tmp3[tmp1>0]=1 # If any are overlap it's an overlap, otherwise not
+tmp[,,t]=tmp3
+}
+final_cyc=tmp
+}
+
 I=which(lon>=min(lonlim) & lon<=max(lonlim))
 J=which(lat>=min(latlim) & lat<=max(latlim))
 
 dimX<-ncdim_def("lon","degrees_E",lon[I])
 dimY<-ncdim_def("lat","degrees_N",lat[J])
-dimT<-ncdim_def("time","hours since 1970-1-1 00:00:00",as.numeric(datelist)/(60*60))
+
+if(daily) {
+tmp=seq.POSIXt(as.POSIXct(paste0(year,"0101 09:00"),format="%Y%m%d %H:%M",tz="GMT"),as.POSIXct(paste0(year,"1231 09:00"),format="%Y%m%d %H:%M",tz="GMT"),by="24 hours")
+dimT<-ncdim_def("time","hours since 1970-1-1 00:00:00",as.numeric(tmp)/(60*60))  
+} else  dimT<-ncdim_def("time","hours since 1970-1-1 00:00:00",as.numeric(datelist)/(60*60))
+
 
 fillvalue <- 9999
 print(unique(as.numeric(final_cyc),na.rm=T))
@@ -144,10 +172,10 @@ nc_close(ncout)
 
 } # End function
 
-for(years in 1980:2015)
+for(years in 1979:2015)
 {
-jen_compare(years,closed=T,winwid=0,
+jen_compare(years,closed=T,winwid=0,winwid2=0,daily=F,
      dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_lows_rad5cv0.15/",
-     outf=paste0("Catto_cyclones_proj100_rad5cv0.15_",years,".nc"))
+     outf=paste0("Catto_cyclones_proj100_rad5cv0.15_confirmed_",years,".nc"))
 }
 

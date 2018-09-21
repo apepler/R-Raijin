@@ -6,10 +6,13 @@ dir="/short/eg3/asp561/cts.dir/gcyc_out/ERAI/proj100_highs_rad10cv0.075/"
 
 snames=c("MAM","JJA","SON","DJF","MJJASO","NDJFMA","Annual")
 mlist=list(3:5,6:8,9:11,c(1:2,12),5:10,c(1:4,11:12),1:12)
-breaks=c(seq(0,5,0.5),100)
-cols=col_val(length(breaks)-1)
-breaks2=c(-100,seq(-3,3,0.5),100)
-cols2=col_anom(length(breaks2)-1)
+breaks=c(seq(0,3,0.25),100)
+
+library(RColorBrewer)
+cols=colorRampPalette(brewer.pal(9,"Blues"))(length(breaks)-1)
+
+breaks2=c(-100,seq(-2,2,0.5),100)
+cols2=colorRampPalette(rev(brewer.pal(11,"RdBu")))(length(breaks2)-1)
 
 regnames=c("Aust","BigTas","GAB","SEIO")
 
@@ -48,7 +51,7 @@ cycslp=ncvar_get(a,"SLP")
 a=nc_open(paste0(dir,"UM_highs_ERAI_proj100_rad10cv0.075_bigaustT2.nc"))
 cyctemp=ncvar_get(a,"T2")
 
-for(r in 2)
+for(r in 1:4)
 for(s in 5:7)
 {
 S=which(fixes$Month[J]%in%mlist[[s]] & fixes[J,regnames[r]]==1)
@@ -58,7 +61,7 @@ avtemp=apply(cyctemp[,,J[S]],c(1,2),mean,na.rm=T)
 
 ## Make some plots
 
-pdf(file=paste0("UM_highs_ERAI_proj100_rad10cv0.075_",regnames[r],"raintemp_500km_",snames[s],".pdf"),height=4,width=10)
+pdf(file=paste0("UM_highs_ERAI_proj100_rad10cv0.075_",regnames[r],"raintemp_500km_",snames[s],"_RdBu2.pdf"),height=4,width=10)
 par(mar=c(2,2,3,1))
 layout(cbind(1,3,2,4),width=c(1,0.25,1,0.25))
 image(lon,lat,avrain[,length(lat):1],breaks=breaks,col=cols, # Have to reverse because ERAI is upside down

@@ -267,7 +267,7 @@ plot_indcorr_panel(1980,2016,seasons=smons,
        snames=slist,inames=c("AOI","Hadley.NH","SOI","Hadley.SH","SAM"),
        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",reanal="ERAI",
        type="anticyclone",proj="proj100_rad10cv0.075",type2="_500km",
-       fout=paste0("paperfig_anticyccorr_All_ERAIpanel_proj100_rad5cv0.15_500km_fieldsig_Bu.pdf"))
+       fout=paste0("paperfig_anticyccorr_All_ERAIpanel_proj100_rad10cv0.15_500km_fieldsig_Bu.pdf"))
 
 #plot_indcorr_panel(1980,2016,seasons=smons,
 #       snames=slist,inames=c("AOI","Hadley.NH","SOI","Hadley.SH","SAM"),

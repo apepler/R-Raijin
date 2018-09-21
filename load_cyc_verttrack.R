@@ -15,18 +15,21 @@ lev=c(1000,925,850,700,600,500) # The 1000 is a dummy, loads surface lows
 ## Chosen by experimenting over the next section (when lows loaded), some examples given here
 
 #thresh=c(1.5,11.5,11,10,11,13) # Closed + 2 fixes
-thresh=c(1.5,13,11.5,10.5,12.5,17) # Closed, any length - may need altering for diff domains
+#thresh=c(1.5,13,11.5,10.5,12.5,17) # Closed, any length - may need altering for diff domains
+#thresh=c(1.4,12,11,10,12,16) # Closed, any length - alternative with higher freq
 #thresh=c(1.5,11,10,10,11,14.5) # Open + 2 fixes
 #thresh=c(1.5,13,11.5,11,14,19.5) # Open, any length
+thresh=c(1.4,12,10.5,10,13,18.5) # Open, any length, v2
 
 lenlim=F # Do cyclones need to last for 2 fixes?
-closed=T # Do cyclones need to be closed?
+closed=F # Do cyclones need to be closed?
 dist=500 # Distance for identifying upper cyclones within
 
 years=1979:2016
-latlim=c(-40,-25)
-lonlim=c(148,160)
+latlim=c(-45,-20) # Expanding the domain so plots of location look right
+lonlim=c(145,165)
 toplev=500 # Will usually be top level, but maybe want to track surface lows up to 300 sometimes, or track down from 700 or 850
+
 
 ## Done with setup, let's run this thing
 ## Load the cyclones for all levels
@@ -57,7 +60,8 @@ for(u in 1:(length(lev)))
     lows[[u]]=tmp[tmp$CV>=thresh[u] & tmp$Year>=min(years) & tmp$Year<=max(years),]
     
   } else {
-    tdir=paste("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev[u],"hPa_z/",uproj2,"/",sep="")
+    if(lev[u]==500) tdir=paste("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev[u],"hPa_z/",uproj2,"_v2/",sep="") else 
+      tdir=paste("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev[u],"hPa_z/",uproj2,"/",sep="")
     tmp=read.csv(paste(tdir,"UM_lows_ERAI_",lev[u],"hPa_",uproj,"_bigaust_fixes.csv",sep=""))
     tmp$Date2=as.POSIXct(paste(as.character(tmp$Date),substr(tmp$Time,1,2),sep=""),format="%Y%m%d%H",tz="GMT")
     tmp$Year=floor(tmp$Date/10000)
@@ -151,7 +155,7 @@ surfcyc$TopLevel=1000
 for(i in 1:length(surfcyc[,1])) surfcyc$TopLevel[i]=lev[max(which(!is.na(surf_verttrack[i,,1])))]
 
 surfcyc$TopCV<-surfcyc$TopBearing<-surfcyc$TopDist<-NaN
-U=which(ulev==toplev)
+U=which(lev==toplev)
 I=which(!is.na(surf_verttrack[,U,1]))
 
 for(i in I)
@@ -260,67 +264,74 @@ tmp=tmp[tmp$Lon>=110 & tmp$Lon<=160 & tmp$Lat>=-45 & tmp$Lat<=-10,] ## This is w
 tmp$Year=floor(tmp$Date/10000)
 
 ## Now I need to get the same subset of cyclones as used for the tracking before
-I=which(tmp[,1]%in%surfcyc[,1]) # Since i have that pesky first column, 
+I2=which(surfcyc$Lon<=160) # Because I don't have any composites further west
+I=which(tmp[,1]%in%surfcyc[I2,1]) # Since i have that pesky first column, 
 
 a=nc_open(paste(tdir,"composite_ERAI_",sproj,"_aust.nc",sep=""))
-surf_slp=ncvar_get(a,"ECL_SLP")[,,I]
-surf_ws=ncvar_get(a,"ECL_WS10")[,,I]
+surf_slp<-surf_ws<-surf_tas<-surf_gph500<-surf_prcp<-array(NaN,c(length(elon),length(elat),length(surfcyc[,1])))
+
+surf_slp[,,I2]=ncvar_get(a,"ECL_SLP")[,,I]
+surf_ws[,,I2]=ncvar_get(a,"ECL_WS10")[,,I]
 
 a=nc_open(paste(tdir,"raintemp_ERAI_",sproj,"_aust.nc",sep=""))
-surf_gph500=ncvar_get(a,"ECL_GPH500")[,,I]
-surf_prcp=ncvar_get(a,"ECL_PRCP")[,,I]
-surf_tas=ncvar_get(a,"ECL_T2")[,,I]
+surf_gph500[,,I2]=ncvar_get(a,"ECL_GPH500")[,,I]
+surf_prcp[,,I2]=ncvar_get(a,"ECL_PRCP")[,,I]
+surf_tas[,,I2]=ncvar_get(a,"ECL_T2")[,,I]
 
 a=nc_open(paste(tdir,"rain_TRMM_ERAI_",sproj,"_aust_19982015.nc",sep=""))
 p=ncvar_get(a,"ECL_PRCP")
-surf_prcpTRMM<-array(NaN,c(length(lat),length(lon),length(I)))
+surf_prcpTRMM<-array(NaN,c(length(lat),length(lon),length(surfcyc[,1])))
 J=which(tmp$Year[I]>=1998 & tmp$Year[I]<=2015)
 K=which(tmp$Year>=1998 & tmp$Year<=2015)
-K2=which(tmp[K,1]%in%surfcyc[,1])
+K2=which(tmp[K,1]%in%surfcyc[I2,1])
 surf_prcpTRMM[,,J]=p[,,K2]
 
 a=nc_open(paste(tdir,"lightning_ERAI_",sproj,"_aust_20052015.nc",sep=""))
 p=ncvar_get(a,"ECL_lightning")
-surf_lng<-array(NaN,c(length(lat),length(lon),length(I)))
+surf_lng<-array(NaN,c(length(lat),length(lon),length(surfcyc[,1])))
 J=which(tmp$Year[I]>=2005 & tmp$Year[I]<=2015)
 K=which(tmp$Year>=2005 & tmp$Year<=2015)
-K2=which(tmp[K,1]%in%surfcyc[,1])
+K2=which(tmp[K,1]%in%surfcyc[I2,1])
 surf_lng[,,J]=p[,,K2]
 
 ## Then upper
 
 U=which(lev==toplev)
-tdir=paste("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev[U],"hPa_z/",uproj2,"/",sep="")
+tdir=paste("/short/eg3/asp561/cts.dir/gcyc_out/ERAI/",lev[U],"hPa_z/",uproj2,"_v2/",sep="")
 tmp=read.csv(paste(tdir,"UM_lows_ERAI_",lev[U],"hPa_",uproj,"_bigaust_fixes.csv",sep=""))
 tmp=tmp[tmp$Lon>=110 & tmp$Lon<=160 & tmp$Lat>=-45 & tmp$Lat<=-10,] ## This is what I did composites for
 tmp$Year=floor(tmp$Date/10000)
 
 ## Now I need to get the same subset of cyclones as used for the tracking before
-I=which(tmp[,1]%in%topcyc[,1]) # Since i have that pesky first column, 
+
+I2=which(topcyc$Lon<=160)
+I=which(tmp[,1]%in%topcyc[I2,1]) # Since i have that pesky first column, 
+
+top_slp<-top_ws<-top_tas<-top_gph500<-top_prcp<-array(NaN,c(length(elon),length(elat),length(topcyc[,1])))
 
 a=nc_open(paste(tdir,"composite_ERAI_",lev[U],"hPa_",uproj,"_aust.nc",sep=""))
-top_slp=ncvar_get(a,"ECL_SLP")[,,I]
-top_ws=ncvar_get(a,"ECL_WS10")[,,I]
+top_slp[,,I2]=ncvar_get(a,"ECL_SLP")[,,I]
+top_ws[,,I2]=ncvar_get(a,"ECL_WS10")[,,I]
 
 a=nc_open(paste(tdir,"raintemp_ERAI_",lev[U],"hPa_",uproj,"_aust.nc",sep=""))
-top_gph500=ncvar_get(a,"ECL_GPH500")[,,I]
-top_prcp=ncvar_get(a,"ECL_PRCP")[,,I]
-top_tas=ncvar_get(a,"ECL_T2")[,,I]
+top_gph500[,,I2]=ncvar_get(a,"ECL_GPH500")[,,I]
+top_prcp[,,I2]=ncvar_get(a,"ECL_PRCP")[,,I]
+top_tas[,,I2]=ncvar_get(a,"ECL_T2")[,,I]
 
 a=nc_open(paste(tdir,"rain_TRMM_ERAI_",lev[U],"hPa_",uproj,"_aust_19982015.nc",sep=""))
 p=ncvar_get(a,"ECL_PRCP")
-top_prcpTRMM<-array(NaN,c(length(lat),length(lon),length(I)))
+top_prcpTRMM<-array(NaN,c(length(lat),length(lon),length(topcyc[,1])))
 J=which(tmp$Year[I]>=1998 & tmp$Year[I]<=2015)
 K=which(tmp$Year>=1998 & tmp$Year<=2015)
-K2=which(tmp[K,1]%in%topcyc[,1])
+K2=which(tmp[K,1]%in%topcyc[I2,1])
 top_prcpTRMM[,,J]=p[,,K2]
 
 a=nc_open(paste(tdir,"lightning_ERAI_",lev[U],"hPa_",uproj,"_aust_20052015.nc",sep=""))
 p=ncvar_get(a,"ECL_lightning")
-top_lng<-array(NaN,c(length(lat),length(lon),length(I)))
+top_lng<-array(NaN,c(length(lat),length(lon),length(topcyc[,1])))
 J=which(tmp$Year[I]>=2005 & tmp$Year[I]<=2015)
 K=which(tmp$Year>=2005 & tmp$Year<=2015)
-K2=which(tmp[K,1]%in%topcyc[,1])
+K2=which(tmp[K,1]%in%topcyc[I2,1])
 top_lng[,,J]=p[,,K2]
 
 ## Add some pertinent fields of impacts to both surf & top cyclones
@@ -375,6 +386,7 @@ for(i in 1:aa[1])
   }
 }
 
+surfcyc[surfcyc==-Inf]=NaN
 ## And upper
 
 
@@ -403,5 +415,6 @@ for(i in 1:aa[1])
   }
 }
 
+topcyc[topcyc==-Inf]=NaN
 ### Everything is loaded and ready for analyses
 ### Huzzah, huzzah

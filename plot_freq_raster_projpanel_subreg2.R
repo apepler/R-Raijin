@@ -164,11 +164,11 @@ dev.off()
 #        proj=c("proj100_rad2cv1_D2",paste0(500,"hPa_proj100_rad5cv4_D2")),latlim=c(-50,-10),lonlim=c(100,180),
 #        fout="paperfig_cycfreqvheight_500km_ERAI_aust_rad2cv1_500hParad5cv4.pdf")
 
-#plot_freq_panel(1980,2016,season=c(1,12),breaks=c(0,0.05,seq(0.25,3,0.25),1000),
-#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-#        type="anticyclone",reanal="ERAI",pnames=c("MSLP","850hPa","700hPa","500hPa"),
-#        proj=c("proj100_rad10cv0.075_500km",paste0(c(850,700,500),"hPa_proj100_rad10cv0.5_500km")),latlim=c(-50,-10),lonlim=c(100,180),
-#        fout="paperfig_anticycfreqvheight_500km_ERAI_aust2.pdf")
+plot_freq_panel(1980,2016,season=c(1,12),breaks=c(0,0.05,seq(0.25,4,0.25),1000),
+        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+        type="anticyclone",reanal="ERAI",pnames=c("MSLP","850hPa","700hPa","500hPa"),
+        proj=c("proj100_rad10cv0.075",paste0(c(850,700,500),"hPa_proj100_rad10cv0.5")),latlim=c(-50,-10),lonlim=c(100,180),
+        fout="paperfig_anticycfreqvheight_ERAI_aust2_Bu.pdf")
 
 #plot_freq_panel(1980,2016,season=c(1,12),breaks=c(0,0.05,seq(0.5,3,0.5),1000),
 #        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
@@ -176,10 +176,10 @@ dev.off()
 #        proj=c("proj100_rad10cv0.075","proj100_rad10cv0.075_D2","proj100_rad10cv0.075_500km","850hPa_proj100_rad10cv0.5"),#latlim=c(-50,-10),lonlim=c(100,180),
 #        fout="paperfig_anticycfreqvduration_ERAI_global_Bu.pdf")
 
-plot_freq_panel(1980,2016,season=c(1,12),breaks=c(0,0.05,seq(0.1,1.5,0.1),1000),
-        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
-        type="cyclone",reanal="ERAI",pnames=c("MSLP","850 hPa","700 hPa","500 hPa"),
-        proj=c("proj240_rad2cv1.5",paste0(c(850,700,500),"hPa_proj240_rad2cv12")),
-        latlim=c(-45,-20),lonlim=c(130,180),ozmap=T,
-        fout="paperfig_cyclones_rad2vheight_ERAI_SEA_Bu.pdf")
+#plot_freq_panel(1980,2016,season=c(1,12),breaks=c(0,0.05,seq(0.1,1.5,0.1),1000),
+#        dir="/short/eg3/asp561/cts.dir/gcyc_out/netcdf",
+#        type="cyclone",reanal="ERAI",pnames=c("MSLP","850 hPa","700 hPa","500 hPa"),
+#        proj=c("proj240_rad2cv1.5",paste0(c(850,700,500),"hPa_proj240_rad2cv12")),
+#        latlim=c(-45,-20),lonlim=c(130,180),ozmap=T,
+#        fout="paperfig_cyclones_rad2vheight_ERAI_SEA_Bu.pdf")
 
